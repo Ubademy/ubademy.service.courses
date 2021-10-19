@@ -1,0 +1,4 @@
+/.coverage
+/coverage.xml
+/.cache/v/cache/lastfailed
+/pytest-coverage.txt

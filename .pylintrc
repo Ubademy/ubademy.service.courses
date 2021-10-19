@@ -1,0 +1,16 @@
+[MASTER]
+disable=
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
+    W0621, # redefined-outer-name
+    C0103, # invalid-name
+    W0707, # raise-missing-from
+    W0622, # redefined-builtin
+    R0913, # too-many-arguments
+    R0903, # too-few-public-methods
+    W0706, # try-except-raise
+    W0702, # bare-except
+    E0611, # no-name-in-module
+    R0401, # cyclic-import
+    R0801, # duplicate-code
