@@ -23,7 +23,6 @@ class TestCourse:
         assert course.description == "This is a course"
         assert course.categories == ["Programming"]
 
-
     def test_course_entity_should_be_identified_by_id(self):
         course_1 = Course(
             id="course_1",

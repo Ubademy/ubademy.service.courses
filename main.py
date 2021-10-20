@@ -37,9 +37,7 @@ from app.usecase.course import (
 config.fileConfig("logging.conf", disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(
-    title="courses"
-)
+app = FastAPI(title="courses")
 
 create_tables()
 

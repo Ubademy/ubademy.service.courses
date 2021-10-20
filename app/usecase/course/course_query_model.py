@@ -1,4 +1,4 @@
-from typing import cast, List
+from typing import List, cast
 
 from pydantic import BaseModel, Field
 

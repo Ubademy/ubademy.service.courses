@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Union, List
+from typing import Union
 
-from sqlalchemy import Column, String, BigInteger, Float, Text
+from sqlalchemy import BigInteger, Column, Float, String, Text
 
 from app.domain.course import Course
 from app.infrastructure.sqlite.database import Base
@@ -16,14 +16,15 @@ class CourseDTO(Base):
 
     __tablename__ = "courses"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
-    creator_id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
+    creator_id: Union[str, Column] = Column(
+        String, primary_key=True, autoincrement=False
+    )
     name: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     price: Union[float, Column] = Column(Float, nullable=False)
     language: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     description: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
     created_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
     updated_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
-
 
     def to_entity(self) -> Course:
         return Course(
