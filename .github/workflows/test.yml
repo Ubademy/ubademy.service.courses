@@ -6,7 +6,6 @@ on:
       - 'docs/**'
     branches:
       - master
-      - develop
   pull_request:
     paths-ignore:
       - 'docs/**'
@@ -60,11 +59,11 @@ jobs:
       - name: Run tests
         run: |
           source .venv/bin/activate
-          poetry run pytest tests/
+          pytest tests/
       - name: Build coverage file
         run: |
           source .venv/bin/activate
-          poetry run pytest --cache-clear --cov=app tests/ --cov-report=xml > pytest-coverage.txt
+          pytest --cache-clear --cov=app tests/ --cov-report=xml > pytest-coverage.txt
       - name: Comment coverage
         uses: coroo/pytest-coverage-commentator@v1.0.2
         with:

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - develop
   pull_request:
     branches:
       - '**'
@@ -56,5 +55,5 @@ jobs:
       - name: Run linters
         run: |
             source .venv/bin/activate
-            poetry run black --skip-string-normalization app
-            poetry run mypy --ignore-missing-imports app
+            black --skip-string-normalization app
+            mypy --ignore-missing-imports app
