@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Union
+from typing import Union, List
 
 from sqlalchemy import Column, String, BigInteger, Float, Text
 
@@ -33,7 +33,7 @@ class CourseDTO(Base):
             price=self.price,
             language=self.language,
             description=self.description,
-            categories=self.categories,
+            categories=[],
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -46,7 +46,7 @@ class CourseDTO(Base):
             price=self.price,
             language=self.language,
             description=self.description,
-            categories=self.categories,
+            categories=[],
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -63,7 +63,6 @@ class CourseDTO(Base):
             price=course.price,
             language=course.language,
             description=course.description,
-            categories=course.categories,
             created_at=course.created_at,
             updated_at=now,
         )
