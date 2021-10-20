@@ -14,10 +14,13 @@ class TestBookQueryUseCase:
         course_query_service = CourseQueryServiceImpl(session)
         course_query_service.find_by_id = Mock(
             return_value=CourseReadModel(
-                id="cPqw4yPVUM3fA9sqzpZmkL",
+                id="course_1",
+                creator_id="creator_1",
                 name="C Programming For Beginners - Master the C Language",
-                categories="Programming",
                 price=10,
+                language="English",
+                description="This is a course",
+                categories=[],
                 created_at=1614007224642,
                 updated_at=1614007224642,
             )
@@ -25,7 +28,7 @@ class TestBookQueryUseCase:
 
         course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
 
-        book = course_query_usecase.fetch_course_by_id("cPqw4yPVUM3fA9sqzpZmkL")
+        book = course_query_usecase.fetch_course_by_id("course_1")
 
         assert book.name == "C Programming For Beginners - Master the C Language"
 
@@ -46,18 +49,24 @@ class TestBookQueryUseCase:
         course_query_service.find_all = Mock(
             return_value=[
                 CourseReadModel(
-                    id="course_01",
+                    id="course_1",
+                    creator_id="creator_1",
                     name="C Programming For Beginners - Master the C Language",
-                    categories="Programming",
                     price=10,
+                    language="English",
+                    description="This is a course",
+                    categories=[],
                     created_at=1614007224642,
                     updated_at=1614007224642,
                 ),
                 CourseReadModel(
-                    id="course_02",
+                    id="course_2",
+                    creator_id="creator_2",
                     name="Learn Python Programming Masterclass",
-                    categories="Programming",
                     price=20,
+                    language="English",
+                    description="This is a course",
+                    categories=[],
                     created_at=1614007224642,
                     updated_at=1614007224642,
                 ),
