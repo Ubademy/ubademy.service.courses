@@ -58,7 +58,13 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
         try:
             uuid = shortuuid.uuid()
             course = Course(
-                id=uuid, name=data.name, categories=data.categories, price=data.price
+                id=uuid,
+                creator_id=data.creator_id,
+                name=data.name,
+                price=data.price,
+                language=data.language,
+                description=data.description,
+                categories=data.categories,
             )
 
             existing_course = self.uow.course_repository.find_by_name(data.name)
@@ -84,9 +90,13 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
 
             course = Course(
                 id=id,
+                creator_id=existing_course.creator_id,
                 name=existing_course.name,
-                categories=data.categories,
                 price=data.price,
+                language=data.language,
+                description=data.description,
+                categories=data.categories,
+                created_at=existing_course.created_at,
             )
 
             self.uow.course_repository.update(course)

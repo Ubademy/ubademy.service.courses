@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Union
 
-from sqlalchemy import Column, Integer, String, BigInteger
+from sqlalchemy import Column, String, BigInteger, Float, Text
 
 from app.domain.course import Course
 from app.infrastructure.sqlite.database import Base
@@ -16,18 +16,24 @@ class CourseDTO(Base):
 
     __tablename__ = "courses"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
+    creator_id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
     name: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
-    categories: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
-    price: Union[int, Column] = Column(Integer, nullable=False)
+    price: Union[float, Column] = Column(Float, nullable=False)
+    language: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    description: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
     created_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
     updated_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
+
 
     def to_entity(self) -> Course:
         return Course(
             id=self.id,
+            creator_id=self.creator_id,
             name=self.name,
-            categories=self.categories,
             price=self.price,
+            language=self.language,
+            description=self.description,
+            categories=self.categories,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -35,9 +41,12 @@ class CourseDTO(Base):
     def to_read_model(self) -> CourseReadModel:
         return CourseReadModel(
             id=self.id,
+            creator_id=self.creator_id,
             name=self.name,
-            categories=self.categories,
             price=self.price,
+            language=self.language,
+            description=self.description,
+            categories=self.categories,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -45,11 +54,16 @@ class CourseDTO(Base):
     @staticmethod
     def from_entity(course: Course) -> "CourseDTO":
         now = unixtimestamp()
+        if course.created_at is None:
+            course.created_at = now
         return CourseDTO(
             id=course.id,
+            creator_id=course.creator_id,
             name=course.name,
-            categories=course.categories,
             price=course.price,
-            created_at=now,
+            language=course.language,
+            description=course.description,
+            categories=course.categories,
+            created_at=course.created_at,
             updated_at=now,
         )

@@ -2,3 +2,9 @@
 /coverage.xml
 /.cache/v/cache/lastfailed
 /pytest-coverage.txt
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/ubademy.service.courses.iml
+/.idea/vcs.xml
