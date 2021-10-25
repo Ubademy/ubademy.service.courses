@@ -6,7 +6,7 @@ from sqlalchemy.orm.session import Session
 from app.domain.course import Course, CourseRepository
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
 
-from .course_dto import CourseDTO
+from .course_dto import CourseDTO, Category
 
 
 class CourseRepositoryImpl(CourseRepository):
@@ -45,8 +45,13 @@ class CourseRepositoryImpl(CourseRepository):
         try:
             _course = self.session.query(CourseDTO).filter_by(id=course_dto.id).one()
             _course.name = course_dto.name
-            _course.categories = course_dto.categories
+            _course.language = course_dto.language
             _course.price = course_dto.price
+            _course.description = course_dto.description
+            _course.updated_at = course_dto.updated_at
+            self.session.query(Category).filter_by(course_id=course_dto.id).delete()
+            _course.categories = course_dto.categories
+
         except:
             raise
 

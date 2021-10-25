@@ -20,7 +20,7 @@ class TestBookQueryUseCase:
                 price=10,
                 language="English",
                 description="This is a course",
-                categories=[],
+                categories=["Programing"],
                 created_at=1614007224642,
                 updated_at=1614007224642,
             )

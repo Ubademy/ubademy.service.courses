@@ -1,5 +1,6 @@
 from app.domain.course import Course
 from app.infrastructure.sqlite.course import CourseDTO
+from app.infrastructure.sqlite.course.course_dto import Category
 
 
 class TestCourseDTO:
@@ -11,6 +12,7 @@ class TestCourseDTO:
             price=10,
             language="English",
             description="This is a course",
+            categories=[Category(category="Programing")],
             created_at=1614007224642,
             updated_at=9999994444444,
         )
@@ -23,7 +25,7 @@ class TestCourseDTO:
         assert course.price == 10
         assert course.language == "English"
         assert course.description == "This is a course"
-        assert course.categories == []
+        assert course.categories == ["Programing"]
         assert course.created_at == 1614007224642
         assert course.updated_at == 9999994444444
 
@@ -35,6 +37,7 @@ class TestCourseDTO:
             price=10,
             language="English",
             description="This is a course",
+            categories=[Category(category="Programing"), Category(category="Beginner")],
             created_at=1614007224642,
             updated_at=9999994444444,
         )
@@ -47,7 +50,7 @@ class TestCourseDTO:
         assert course.price == 10
         assert course.language == "English"
         assert course.description == "This is a course"
-        assert course.categories == []
+        assert course.categories == ["Programing", "Beginner"]
         assert course.created_at == 1614007224642
         assert course.updated_at == 9999994444444
 
@@ -59,7 +62,7 @@ class TestCourseDTO:
             price=10,
             language="English",
             description="This is a course",
-            categories=[],
+            categories=["Programing", "Beginner"],
         )
 
         course_dto = CourseDTO.from_entity(course)
@@ -71,6 +74,8 @@ class TestCourseDTO:
         assert course_dto.language == "English"
         assert course_dto.description == "This is a course"
         assert course_dto.created_at == course_dto.updated_at
+        assert course_dto.get_categories() == ["Programing", "Beginner"]
+
 
     def test_from_entity_should_create_dto_instance_preserves_created_at(self):
         course = Course(
@@ -80,7 +85,7 @@ class TestCourseDTO:
             price=10,
             language="English",
             description="This is a course",
-            categories=[],
+            categories=["Programing"],
             created_at=1614007224642,
             updated_at=9999994444444,
         )
@@ -94,3 +99,4 @@ class TestCourseDTO:
         assert course_dto.language == "English"
         assert course_dto.description == "This is a course"
         assert course_dto.created_at == 1614007224642
+        assert course_dto.get_categories() == ["Programing"]

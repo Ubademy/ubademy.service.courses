@@ -27,4 +27,6 @@ lint:
 	$(PYLINT) main.py ./${PACKAGE}
 
 dev:
-	${UVICORN} main:app --reload
+	$ docker rm db
+	$ docker-compose build
+	$ docker-compose up
