@@ -1,7 +1,7 @@
-# ubademy.service.pytemplate
+# ubademy.service.courses
 [![codecov](https://codecov.io/gh/Ubademy/ubademy.service.pytemplate/branch/master/graph/badge.svg?token=WOM0ZAP02J)](https://codecov.io/gh/Ubademy/ubademy.service.pytemplate) [![Tests](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/test.yml/badge.svg)](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/test.yml) [![Linters](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/linters.yml/badge.svg)](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/linters.yml) [![Deploy](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/deploy.yml/badge.svg)](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/deploy.yml)
 
-This is a template repository for a REST api on python.
+This is courses microservice.
 
 ## Technologies
 

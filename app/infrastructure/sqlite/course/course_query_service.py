@@ -33,7 +33,4 @@ class CourseQueryServiceImpl(CourseQueryService):
         except:
             raise
 
-        if len(course_dtos) == 0:
-            return []
-
         return list(map(lambda course_dto: course_dto.to_read_model(), course_dtos))
