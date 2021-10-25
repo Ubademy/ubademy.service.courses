@@ -145,6 +145,7 @@ async def get_course(
 ):
     try:
         course = course_query_usecase.fetch_course_by_id(course_id)
+
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -157,6 +158,39 @@ async def get_course(
         )
 
     return course
+
+
+@app.get(
+    "/courses/creator/{creator_id}",
+    response_model=List[CourseReadModel],
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCoursesNotFound,
+        },
+    },
+    tags=["courses"],
+)
+async def get_creator_courses(
+    creator_id: str,
+    course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
+):
+    try:
+        courses = course_query_usecase.fetch_courses_by_creator_id(creator_id)
+
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    if len(courses) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=CoursesNotFoundError.message,
+        )
+
+    return courses
 
 
 @app.put(

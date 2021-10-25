@@ -34,3 +34,13 @@ class CourseQueryServiceImpl(CourseQueryService):
             raise
 
         return list(map(lambda course_dto: course_dto.to_read_model(), course_dtos))
+
+    def find_by_creator_id(self, creator_id: str) -> List[CourseReadModel]:
+        try:
+            course_dtos = (
+                self.session.query(CourseDTO).filter_by(creator_id=creator_id).all()
+            )
+        except:
+            raise
+
+        return list(map(lambda course_dto: course_dto.to_read_model(), course_dtos))
