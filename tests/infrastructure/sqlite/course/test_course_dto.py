@@ -76,7 +76,6 @@ class TestCourseDTO:
         assert course_dto.created_at == course_dto.updated_at
         assert course_dto.get_categories() == ["Programing", "Beginner"]
 
-
     def test_from_entity_should_create_dto_instance_preserves_created_at(self):
         course = Course(
             id="course_1",

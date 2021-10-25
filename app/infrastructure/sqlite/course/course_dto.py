@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Union, List
+from typing import List, Union
 
 import shortuuid
-from sqlalchemy import BigInteger, Column, Float, String, Text, Integer, ForeignKey
+from sqlalchemy import BigInteger, Column, Float, ForeignKey, String, Text
 from sqlalchemy.orm import relationship
 
 from app.domain.course import Course
@@ -93,7 +93,7 @@ class Category(Base):
 
     __tablename__ = "categories"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
-    course_id: Union[str, Column] = Column(String, ForeignKey("courses.id"), autoincrement=False)
+    course_id: Union[str, Column] = Column(
+        String, ForeignKey("courses.id"), autoincrement=False
+    )
     category: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
-
-
