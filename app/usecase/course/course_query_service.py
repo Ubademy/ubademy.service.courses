@@ -12,3 +12,7 @@ class CourseQueryService(ABC):
     @abstractmethod
     def find_all(self) -> List[CourseReadModel]:
         raise NotImplementedError
+
+    @abstractmethod
+    def find_by_creator_id(self, creator_id: str) -> List[CourseReadModel]:
+        raise NotImplementedError

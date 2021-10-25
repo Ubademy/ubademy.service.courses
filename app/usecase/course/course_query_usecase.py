@@ -16,6 +16,10 @@ class CourseQueryUseCase(ABC):
     def fetch_courses(self) -> List[CourseReadModel]:
         raise NotImplementedError
 
+    @abstractmethod
+    def fetch_courses_by_creator_id(self, creator_id: str) -> List[CourseReadModel]:
+        raise NotImplementedError
+
 
 class CourseQueryUseCaseImpl(CourseQueryUseCase):
     def __init__(self, course_query_service: CourseQueryService):
@@ -34,6 +38,14 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
     def fetch_courses(self) -> List[CourseReadModel]:
         try:
             courses = self.course_query_service.find_all()
+        except:
+            raise
+
+        return courses
+
+    def fetch_courses_by_creator_id(self, creator_id: str) -> List[CourseReadModel]:
+        try:
+            courses = self.course_query_service.find_by_creator_id(creator_id)
         except:
             raise
 
