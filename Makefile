@@ -26,7 +26,9 @@ fmt:
 lint:
 	$(PYLINT) main.py ./${PACKAGE}
 
-dev:
+build:
 	$ docker rm db
 	$ docker-compose build
+
+run:
 	$ docker-compose up
