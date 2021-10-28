@@ -14,5 +14,12 @@ class CourseQueryService(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def find_by_creator_id(self, creator_id: str) -> List[CourseReadModel]:
+    def find_by_filters(
+        self,
+        name: Optional[str],
+        creator_id: Optional[str],
+        category: Optional[str],
+        ignore_free: Optional[bool],
+        ignore_paid: Optional[bool],
+    ) -> List[CourseReadModel]:
         raise NotImplementedError

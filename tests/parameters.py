@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, Mock
 from app.domain.course import Course, CourseNotFoundError
 from app.infrastructure.sqlite.course import CourseDTO
 from app.infrastructure.sqlite.course.course_dto import Category
+from app.usecase.course import CourseUpdateModel
 
 course_dto_1 = CourseDTO(
     id="course_1",
@@ -12,6 +13,18 @@ course_dto_1 = CourseDTO(
     language="English",
     description="This is a course",
     categories=[Category(category="Programing")],
+    created_at=1614007224642,
+    updated_at=1614007224642,
+)
+
+course_1_update = CourseUpdateModel(
+    id="course_1",
+    creator_id="creator_1",
+    name="C Programming For Beginners - Master the C Language",
+    price=10,
+    language="English",
+    description="This is a course",
+    categories=["Programing"],
     created_at=1614007224642,
     updated_at=1614007224642,
 )
