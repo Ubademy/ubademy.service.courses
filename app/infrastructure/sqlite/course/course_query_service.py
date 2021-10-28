@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional
 
 from sqlalchemy.orm.exc import NoResultFound
@@ -5,7 +6,7 @@ from sqlalchemy.orm.session import Session
 
 from app.usecase.course import CourseQueryService, CourseReadModel
 
-from .course_dto import CourseDTO
+from .course_dto import Category, CourseDTO
 
 
 class CourseQueryServiceImpl(CourseQueryService):
@@ -35,11 +36,30 @@ class CourseQueryServiceImpl(CourseQueryService):
 
         return list(map(lambda course_dto: course_dto.to_read_model(), course_dtos))
 
-    def find_by_creator_id(self, creator_id: str) -> List[CourseReadModel]:
+    def find_by_filters(
+        self,
+        name: Optional[str],
+        creator_id: Optional[str],
+        category: Optional[str],
+        ignore_free: Optional[bool],
+        ignore_paid: Optional[bool],
+    ) -> List[CourseReadModel]:
         try:
-            course_dtos = (
-                self.session.query(CourseDTO).filter_by(creator_id=creator_id).all()
-            )
+            courses_q = self.session.query(CourseDTO)
+            if name:
+                courses_q = courses_q.filter_by(name=name)
+            if creator_id:
+                courses_q = courses_q.filter_by(creator_id=creator_id)
+            if ignore_free:
+                courses_q = courses_q.filter(CourseDTO.price > 0)
+            if ignore_paid:
+                courses_q = courses_q.filter(CourseDTO.price == 0)
+            if category:
+                courses_q = courses_q.filter(
+                    CourseDTO.categories.any(category=category)
+                )
+
+            course_dtos = courses_q.all()
         except:
             raise
 
