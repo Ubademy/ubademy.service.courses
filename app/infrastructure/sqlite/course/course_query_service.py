@@ -1,4 +1,3 @@
-import logging
 from typing import List, Optional
 
 from sqlalchemy.orm.exc import NoResultFound
@@ -6,7 +5,7 @@ from sqlalchemy.orm.session import Session
 
 from app.usecase.course import CourseQueryService, CourseReadModel
 
-from .course_dto import Category, CourseDTO
+from .course_dto import CourseDTO
 
 
 class CourseQueryServiceImpl(CourseQueryService):

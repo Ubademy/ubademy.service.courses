@@ -5,7 +5,7 @@ import pytest
 from app.domain.course import CourseNameAlreadyExistsError
 from app.infrastructure.sqlite.course import CourseCommandUseCaseUnitOfWorkImpl
 from app.usecase.course import CourseCommandUseCaseImpl
-from tests.parameters import course_1, mock_filter_course_1_name_course, course_1_update
+from tests.parameters import course_1, course_1_update, mock_filter_course_1_name_course
 
 
 class TestCourseCommandUseCase:
@@ -51,6 +51,8 @@ class TestCourseCommandUseCase:
         )
         course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
 
-        course = course_command_usecase.update_course(id=course_1.id, data=course_1_update)
+        course = course_command_usecase.update_course(
+            id=course_1.id, data=course_1_update
+        )
 
         assert course.name == course_1.name
