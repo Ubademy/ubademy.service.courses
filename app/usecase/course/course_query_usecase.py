@@ -17,7 +17,14 @@ class CourseQueryUseCase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def fetch_courses_by_creator_id(self, creator_id: str) -> List[CourseReadModel]:
+    def fetch_courses_by_filters(
+        self,
+        name: Optional[str],
+        creator_id: Optional[str],
+        category: Optional[str],
+        ignore_free: Optional[bool],
+        ignore_paid: Optional[bool],
+    ) -> List[CourseReadModel]:
         raise NotImplementedError
 
 
@@ -43,9 +50,22 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
 
         return courses
 
-    def fetch_courses_by_creator_id(self, creator_id: str) -> List[CourseReadModel]:
+    def fetch_courses_by_filters(
+        self,
+        name: Optional[str],
+        creator_id: Optional[str],
+        category: Optional[str],
+        ignore_free: Optional[bool],
+        ignore_paid: Optional[bool],
+    ) -> List[CourseReadModel]:
         try:
-            courses = self.course_query_service.find_by_creator_id(creator_id)
+            courses = self.course_query_service.find_by_filters(
+                name=name,
+                creator_id=creator_id,
+                category=category,
+                ignore_free=ignore_free,
+                ignore_paid=ignore_paid,
+            )
         except:
             raise
 

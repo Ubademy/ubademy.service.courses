@@ -1,6 +1,6 @@
 import logging
 from logging import config
-from typing import Iterator, List
+from typing import Iterator, List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm.session import Session
@@ -129,6 +129,49 @@ async def get_courses(
 
 
 @app.get(
+    "/courses/",
+    response_model=List[CourseReadModel],
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCoursesNotFound,
+        },
+    },
+    tags=["courses"],
+)
+async def get_courses_filtering(
+    name: Optional[str] = None,
+    creator_id: Optional[str] = None,
+    category: Optional[str] = None,
+    ignore_free: Optional[bool] = None,
+    ignore_paid: Optional[bool] = None,
+    course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
+):
+    try:
+        courses = course_query_usecase.fetch_courses_by_filters(
+            name=name,
+            creator_id=creator_id,
+            category=category,
+            ignore_free=ignore_free,
+            ignore_paid=ignore_paid,
+        )
+
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    if courses is None or len(courses) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=CoursesNotFoundError.message,
+        )
+
+    return courses
+
+
+@app.get(
     "/courses/{course_id}",
     response_model=CourseReadModel,
     status_code=status.HTTP_200_OK,
@@ -158,39 +201,6 @@ async def get_course(
         )
 
     return course
-
-
-@app.get(
-    "/courses/creator/{creator_id}",
-    response_model=List[CourseReadModel],
-    status_code=status.HTTP_200_OK,
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "model": ErrorMessageCoursesNotFound,
-        },
-    },
-    tags=["courses"],
-)
-async def get_creator_courses(
-    creator_id: str,
-    course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
-):
-    try:
-        courses = course_query_usecase.fetch_courses_by_creator_id(creator_id)
-
-    except Exception as e:
-        logger.error(e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-    if len(courses) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=CoursesNotFoundError.message,
-        )
-
-    return courses
 
 
 @app.put(
