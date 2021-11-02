@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Union
 
 import shortuuid
-from sqlalchemy import BigInteger, Column, Float, ForeignKey, String, Text
+from sqlalchemy import BigInteger, Boolean, Column, Float, ForeignKey, String, Text
 from sqlalchemy.orm import relationship
 
 from app.domain.course import Course
@@ -70,6 +70,16 @@ class CourseDTO(Base):
             updated_at=self.updated_at,
         )
 
+    def has_active_user_with_id(self, id: str):
+        return (
+            len(
+                list(
+                    filter(lambda user: user.active and user.user_id == id, self.users)
+                )
+            )
+            > 0
+        )
+
     @staticmethod
     def from_entity(course: Course) -> "CourseDTO":
         now = unixtimestamp()
@@ -110,6 +120,7 @@ class User(Base):
         String, ForeignKey("courses.id"), autoincrement=False
     )
     role: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    active: Union[bool, Column] = Column(Boolean, nullable=False, autoincrement=False)
 
     def to_read_model(self) -> UserReadModel:
         return UserReadModel(
@@ -118,6 +129,9 @@ class User(Base):
             role=self.role,
         )
 
+    def deactivate(self):
+        self.active = False
+
     @staticmethod
     def from_read_model(user: UserReadModel) -> "User":
         return User(
@@ -125,4 +139,5 @@ class User(Base):
             user_id=user.id,
             course_id=user.course_id,
             role=user.role,
+            active=True,
         )

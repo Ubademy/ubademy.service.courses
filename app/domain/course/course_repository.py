@@ -29,3 +29,7 @@ class CourseRepository(ABC):
     @abstractmethod
     def add_user(self, data: UserReadModel) -> Optional[UserReadModel]:
         raise NotImplementedError
+
+    @abstractmethod
+    def deactivate_user_from_course(self, user_id, course_id):
+        raise NotImplementedError

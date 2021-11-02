@@ -3,7 +3,8 @@ from typing import Optional
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 
-from app.domain.course import Course, CourseRepository, CourseNotFoundError
+from app.domain.course import Course, CourseNotFoundError, CourseRepository
+from app.domain.user.user_exception import UserAlreadyInCourseError
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
 from app.usecase.user.user_query_model import UserReadModel
 
@@ -65,12 +66,26 @@ class CourseRepositoryImpl(CourseRepository):
     def add_user(self, data: UserReadModel) -> Optional[UserReadModel]:
         try:
             course = self.session.query(CourseDTO).filter_by(id=data.course_id).first()
+            if course.has_active_user_with_id(data.id):
+                raise UserAlreadyInCourseError
             course.users.append(User.from_read_model(data))
         except NoResultFound:
             raise CourseNotFoundError
         except:
             raise
         return data
+
+    def deactivate_user_from_course(self, user_id, course_id):
+        try:
+            users = (
+                self.session.query(User)
+                .filter_by(user_id=user_id, course_id=course_id)
+                .all()
+            )
+            for i in users:
+                i.deactivate()
+        except:
+            raise
 
 
 class CourseCommandUseCaseUnitOfWorkImpl(CourseCommandUseCaseUnitOfWork):

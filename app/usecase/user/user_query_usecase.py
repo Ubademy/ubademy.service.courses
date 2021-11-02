@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from app.domain.user.user_exception import NoColabsInCourseError, NoStudentsInCourseError
+from app.domain.user.user_exception import (
+    NoColabsInCourseError,
+    NoStudentsInCourseError,
+)
 from app.usecase.course import CourseQueryService
 from app.usecase.user.user_query_model import UserReadModel
 
@@ -22,10 +25,7 @@ class UserQueryUseCaseImpl(UserQueryUseCase):
     def fetch_students_by_id(self, id: str) -> List[UserReadModel]:
         try:
             users = self.course_query_service.find_users_by_id(id)
-            students = []
-            for i in users:
-                if i.is_student():
-                    students.append(i)
+            students = list(filter(lambda user: user.is_student(), users))
             if len(students) == 0:
                 raise NoStudentsInCourseError
         except:
@@ -36,10 +36,7 @@ class UserQueryUseCaseImpl(UserQueryUseCase):
     def fetch_colabs_by_id(self, id: str) -> List[UserReadModel]:
         try:
             users = self.course_query_service.find_users_by_id(id)
-            colabs = []
-            for i in users:
-                if i.is_colab():
-                    colabs.append(i)
+            colabs = list(filter(lambda user: user.is_colab(), users))
             if len(colabs) == 0:
                 raise NoColabsInCourseError
         except:

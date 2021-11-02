@@ -20,7 +20,7 @@ class NoStudentsInCourseError(Exception):
 
 
 class UserAlreadyInCourseError(Exception):
-    message = "The course you specified already has a student with that id."
+    message = "The course you specified already has an active user with that id."
 
     def __str__(self):
         return UserAlreadyInCourseError.message

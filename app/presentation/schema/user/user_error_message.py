@@ -1,9 +1,9 @@
 from pydantic import BaseModel, Field
 
 from app.domain.user.user_exception import (
-    NoUsersInCourseError,
     NoColabsInCourseError,
     NoStudentsInCourseError,
+    NoUsersInCourseError,
     UserAlreadyInCourseError,
 )
 

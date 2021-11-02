@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from .course_query_model import CourseReadModel
 from ..user.user_query_model import UserReadModel
+from .course_query_model import CourseReadModel
 
 
 class CourseQueryService(ABC):

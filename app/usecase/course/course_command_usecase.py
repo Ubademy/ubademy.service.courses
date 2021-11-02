@@ -10,9 +10,9 @@ from app.domain.course import (
     CourseRepository,
 )
 
+from ..user.user_query_model import UserReadModel
 from .course_command_model import CourseCreateModel, CourseUpdateModel
 from .course_query_model import CourseReadModel
-from ..user.user_query_model import UserReadModel
 
 
 class CourseCommandUseCaseUnitOfWork(ABC):
@@ -49,6 +49,10 @@ class CourseCommandUseCase(ABC):
 
     @abstractmethod
     def add_user(self, data: UserReadModel) -> Optional[UserReadModel]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def deactivate_user_from_course(self, user_id: str, course_id: str):
         raise NotImplementedError
 
 
@@ -140,3 +144,14 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
             raise
 
         return data
+
+    def deactivate_user_from_course(self, user_id: str, course_id: str):
+        try:
+            course = self.uow.course_repository.find_by_id(course_id)
+            if course is None:
+                raise CourseNotFoundError
+            self.uow.course_repository.deactivate_user_from_course(user_id, course_id)
+            self.uow.commit()
+        except:
+            self.uow.rollback()
+            raise

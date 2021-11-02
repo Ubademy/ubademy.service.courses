@@ -11,8 +11,12 @@ from app.domain.course import (
     CourseRepository,
     CoursesNotFoundError,
 )
-from app.domain.user.user_exception import NoStudentsInCourseError, NoColabsInCourseError, NoUsersInCourseError, \
-    UserAlreadyInCourseError
+from app.domain.user.user_exception import (
+    NoColabsInCourseError,
+    NoStudentsInCourseError,
+    NoUsersInCourseError,
+    UserAlreadyInCourseError,
+)
 from app.infrastructure.sqlite.course import (
     CourseCommandUseCaseUnitOfWorkImpl,
     CourseQueryServiceImpl,
@@ -24,7 +28,9 @@ from app.presentation.schema.course.course_error_message import (
     ErrorMessageCourseNotFound,
     ErrorMessageCoursesNotFound,
 )
-from app.presentation.schema.user.user_error_message import ErrorMessageUserAlreadyInCourse
+from app.presentation.schema.user.user_error_message import (
+    ErrorMessageUserAlreadyInCourse,
+)
 from app.usecase.course import (
     CourseCommandUseCase,
     CourseCommandUseCaseImpl,
@@ -254,6 +260,7 @@ async def get_course_students(
 
     return students
 
+
 @app.post(
     "/courses/{course_id}",
     response_model=UserReadModel,
@@ -293,6 +300,35 @@ async def add_user(
         )
 
     return user
+
+
+@app.delete(
+    "/courses/{course_id}/users/{user_id}",
+    status_code=status.HTTP_202_ACCEPTED,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+    },
+    tags=["users"],
+)
+async def deactivate_user(
+    course_id: str,
+    user_id: str,
+    course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+):
+    try:
+        course_command_usecase.deactivate_user_from_course(user_id, course_id)
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @app.get(
