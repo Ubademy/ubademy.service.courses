@@ -11,7 +11,8 @@ from app.domain.course import (
     CourseRepository,
     CoursesNotFoundError,
 )
-from app.domain.user.user_exception import NoStudentsInCourseError, NoColabsInCourseError, NoUsersInCourseError
+from app.domain.user.user_exception import NoStudentsInCourseError, NoColabsInCourseError, NoUsersInCourseError, \
+    UserAlreadyInCourseError
 from app.infrastructure.sqlite.course import (
     CourseCommandUseCaseUnitOfWorkImpl,
     CourseQueryServiceImpl,
@@ -23,6 +24,7 @@ from app.presentation.schema.course.course_error_message import (
     ErrorMessageCourseNotFound,
     ErrorMessageCoursesNotFound,
 )
+from app.presentation.schema.user.user_error_message import ErrorMessageUserAlreadyInCourse
 from app.usecase.course import (
     CourseCommandUseCase,
     CourseCommandUseCaseImpl,
@@ -251,6 +253,46 @@ async def get_course_students(
         )
 
     return students
+
+@app.post(
+    "/courses/{course_id}",
+    response_model=UserReadModel,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_409_CONFLICT: {
+            "model": ErrorMessageUserAlreadyInCourse,
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+    },
+    tags=["users"],
+)
+async def add_user(
+    data: UserReadModel,
+    course_id: str,
+    course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+):
+    try:
+        data.course_id = course_id
+        user = course_command_usecase.add_user(data)
+    except UserAlreadyInCourseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=e.message,
+        )
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return user
 
 
 @app.get(

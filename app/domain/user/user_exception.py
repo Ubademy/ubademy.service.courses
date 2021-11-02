@@ -17,3 +17,10 @@ class NoStudentsInCourseError(Exception):
 
     def __str__(self):
         return NoStudentsInCourseError.message
+
+
+class UserAlreadyInCourseError(Exception):
+    message = "The course you specified already has a student with that id."
+
+    def __str__(self):
+        return UserAlreadyInCourseError.message

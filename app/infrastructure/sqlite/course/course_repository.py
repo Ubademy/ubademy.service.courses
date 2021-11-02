@@ -3,10 +3,11 @@ from typing import Optional
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 
-from app.domain.course import Course, CourseRepository
+from app.domain.course import Course, CourseRepository, CourseNotFoundError
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
+from app.usecase.user.user_query_model import UserReadModel
 
-from .course_dto import Category, CourseDTO
+from .course_dto import Category, CourseDTO, User
 
 
 class CourseRepositoryImpl(CourseRepository):
@@ -60,6 +61,16 @@ class CourseRepositoryImpl(CourseRepository):
             self.session.delete(course)
         except:
             raise
+
+    def add_user(self, data: UserReadModel) -> Optional[UserReadModel]:
+        try:
+            course = self.session.query(CourseDTO).filter_by(id=data.course_id).first()
+            course.users.append(User.from_read_model(data))
+        except NoResultFound:
+            raise CourseNotFoundError
+        except:
+            raise
+        return data
 
 
 class CourseCommandUseCaseUnitOfWorkImpl(CourseCommandUseCaseUnitOfWork):

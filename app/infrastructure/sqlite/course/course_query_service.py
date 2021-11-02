@@ -70,12 +70,8 @@ class CourseQueryServiceImpl(CourseQueryService):
 
     def find_users_by_id(self, id: str) -> List[UserReadModel]:
         try:
-            try:
-                self.session.query(CourseDTO).filter_by(id=id).one()
-            except NoResultFound:
-                raise CourseNotFoundError
-
-            users = self.session.query(User).filter_by(course_id=id).all()
+            course = self.session.query(CourseDTO).filter_by(id=id).one()
+            users = course.users
             if len(users) == 0:
                 raise NoUsersInCourseError
         except:

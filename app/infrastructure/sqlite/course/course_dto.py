@@ -117,3 +117,12 @@ class User(Base):
             course_id=self.course_id,
             role=self.role,
         )
+
+    @staticmethod
+    def from_read_model(user: UserReadModel) -> "User":
+        return User(
+            id=shortuuid.uuid(),
+            user_id=user.id,
+            course_id=user.course_id,
+            role=user.role,
+        )

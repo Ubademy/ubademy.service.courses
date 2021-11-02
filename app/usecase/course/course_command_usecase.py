@@ -12,6 +12,7 @@ from app.domain.course import (
 
 from .course_command_model import CourseCreateModel, CourseUpdateModel
 from .course_query_model import CourseReadModel
+from ..user.user_query_model import UserReadModel
 
 
 class CourseCommandUseCaseUnitOfWork(ABC):
@@ -44,6 +45,10 @@ class CourseCommandUseCase(ABC):
 
     @abstractmethod
     def delete_course_by_id(self, id: str):
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_user(self, data: UserReadModel) -> Optional[UserReadModel]:
         raise NotImplementedError
 
 
@@ -122,3 +127,16 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
         except:
             self.uow.rollback()
             raise
+
+    def add_user(self, data: UserReadModel) -> Optional[UserReadModel]:
+        try:
+            course = self.uow.course_repository.find_by_id(data.course_id)
+            if course is None:
+                raise CourseNotFoundError
+            self.uow.course_repository.add_user(data)
+            self.uow.commit()
+        except:
+            self.uow.rollback()
+            raise
+
+        return data

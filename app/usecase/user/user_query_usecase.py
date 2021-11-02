@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from app.domain.course import CourseNotFoundError
 from app.domain.user.user_exception import NoColabsInCourseError, NoStudentsInCourseError
 from app.usecase.course import CourseQueryService
 from app.usecase.user.user_query_model import UserReadModel
