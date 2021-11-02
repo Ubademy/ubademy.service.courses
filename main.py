@@ -11,6 +11,7 @@ from app.domain.course import (
     CourseRepository,
     CoursesNotFoundError,
 )
+from app.domain.user.user_exception import NoStudentsInCourseError, NoColabsInCourseError, NoUsersInCourseError
 from app.infrastructure.sqlite.course import (
     CourseCommandUseCaseUnitOfWorkImpl,
     CourseQueryServiceImpl,
@@ -33,6 +34,8 @@ from app.usecase.course import (
     CourseReadModel,
     CourseUpdateModel,
 )
+from app.usecase.user.user_query_model import UserReadModel
+from app.usecase.user.user_query_usecase import UserQueryUseCase, UserQueryUseCaseImpl
 
 config.fileConfig("logging.conf", disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
@@ -53,6 +56,11 @@ def get_session() -> Iterator[Session]:
 def course_query_usecase(session: Session = Depends(get_session)) -> CourseQueryUseCase:
     course_query_service: CourseQueryService = CourseQueryServiceImpl(session)
     return CourseQueryUseCaseImpl(course_query_service)
+
+
+def user_query_usecase(session: Session = Depends(get_session)) -> UserQueryUseCase:
+    course_query_service: CourseQueryService = CourseQueryServiceImpl(session)
+    return UserQueryUseCaseImpl(course_query_service)
 
 
 def course_command_usecase(
@@ -201,6 +209,90 @@ async def get_course(
         )
 
     return course
+
+
+@app.get(
+    "/courses/{course_id}/students",
+    response_model=List[UserReadModel],
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+    },
+    tags=["users"],
+)
+async def get_course_students(
+    course_id: str,
+    user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
+):
+    try:
+        students = user_query_usecase.fetch_students_by_id(course_id)
+
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except NoUsersInCourseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except NoStudentsInCourseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return students
+
+
+@app.get(
+    "/courses/{course_id}/colabs",
+    response_model=List[UserReadModel],
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+    },
+    tags=["users"],
+)
+async def get_course_colabs(
+    course_id: str,
+    user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
+):
+    try:
+        colabs = user_query_usecase.fetch_colabs_by_id(course_id)
+
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except NoUsersInCourseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except NoColabsInCourseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return colabs
 
 
 @app.put(
