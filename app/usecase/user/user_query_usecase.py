@@ -14,6 +14,7 @@ class UserQueryUseCase(ABC):
     def fetch_students_by_id(self, id: str) -> List[UserReadModel]:
         raise NotImplementedError
 
+    @abstractmethod
     def fetch_colabs_by_id(self, id: str) -> List[UserReadModel]:
         raise NotImplementedError
 
