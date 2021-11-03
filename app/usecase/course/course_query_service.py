@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
+from ..user.user_query_model import UserReadModel
 from .course_query_model import CourseReadModel
 
 
@@ -22,4 +23,8 @@ class CourseQueryService(ABC):
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
     ) -> List[CourseReadModel]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def find_users_by_id(self, id: str) -> List[UserReadModel]:
         raise NotImplementedError

@@ -52,11 +52,11 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
 
     def fetch_courses_by_filters(
         self,
-        name: Optional[str],
-        creator_id: Optional[str],
-        category: Optional[str],
-        ignore_free: Optional[bool],
-        ignore_paid: Optional[bool],
+        name: Optional[str] = None,
+        creator_id: Optional[str] = None,
+        category: Optional[str] = None,
+        ignore_free: Optional[bool] = None,
+        ignore_paid: Optional[bool] = None,
     ) -> List[CourseReadModel]:
         try:
             courses = self.course_query_service.find_by_filters(
