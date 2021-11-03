@@ -69,3 +69,15 @@ class TestBookQueryUseCase:
 
         with pytest.raises(CoursesNotFoundError):
             course_query_usecase.fetch_courses()
+
+    def test_fetch_courses_by_filters_with_no_filters_should_return_all(self):
+        session = MagicMock()
+        session.query(CourseDTO).all = Mock(side_effect=mock_fetch_all)
+        course_query_service = CourseQueryServiceImpl(session)
+        course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
+
+        courses = course_query_usecase.fetch_courses_by_filters()
+
+        assert len(courses) == 2
+        assert courses[0].price == 10
+        assert courses[1].price == 20
