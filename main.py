@@ -17,12 +17,12 @@ from app.domain.user.user_exception import (
     NoUsersInCourseError,
     UserAlreadyInCourseError,
 )
-from app.infrastructure.sqlite.course import (
+from app.infrastructure.course import (
     CourseCommandUseCaseUnitOfWorkImpl,
     CourseQueryServiceImpl,
     CourseRepositoryImpl,
 )
-from app.infrastructure.sqlite.database import SessionLocal, create_tables
+from app.infrastructure.database import SessionLocal, create_tables
 from app.presentation.schema.course.course_error_message import (
     ErrorMessageCourseNameAlreadyExists,
     ErrorMessageCourseNotFound,

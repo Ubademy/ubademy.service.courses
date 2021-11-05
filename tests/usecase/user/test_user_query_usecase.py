@@ -6,7 +6,7 @@ from app.domain.user.user_exception import (
     NoColabsInCourseError,
     NoStudentsInCourseError,
 )
-from app.infrastructure.sqlite.course import CourseDTO, CourseQueryServiceImpl
+from app.infrastructure.course import CourseDTO, CourseQueryServiceImpl
 from app.usecase.user.user_query_usecase import UserQueryUseCaseImpl
 from tests.parameters import course_dto_no_colabs, course_dto_no_students
 

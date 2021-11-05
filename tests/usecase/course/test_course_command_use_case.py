@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, Mock
 import pytest
 
 from app.domain.course import CourseNameAlreadyExistsError
-from app.infrastructure.sqlite.course import (
+from app.infrastructure.course import (
     CourseCommandUseCaseUnitOfWorkImpl,
     CourseDTO,
     CourseRepositoryImpl,
@@ -13,7 +13,6 @@ from tests.parameters import (
     course_1,
     course_1_update,
     mock_filter_course_1,
-    mock_filter_course_1_name,
     mock_filter_course_1_name_course,
     mock_filter_course_1_with_user,
     user_1,

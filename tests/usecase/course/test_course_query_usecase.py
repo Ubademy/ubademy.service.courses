@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.exc import NoResultFound
 
 from app.domain.course import CourseNotFoundError, CoursesNotFoundError
-from app.infrastructure.sqlite.course import CourseDTO, CourseQueryServiceImpl
+from app.infrastructure.course import CourseDTO, CourseQueryServiceImpl
 from app.usecase.course import CourseQueryUseCaseImpl
 from tests.parameters import mock_fetch_all, mock_filter_course_1
 

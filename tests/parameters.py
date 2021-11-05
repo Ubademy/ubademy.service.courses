@@ -1,8 +1,9 @@
 from unittest.mock import MagicMock, Mock
 
 from app.domain.course import Course, CourseNotFoundError
-from app.infrastructure.sqlite.course import CourseDTO
-from app.infrastructure.sqlite.course.course_dto import Category, User
+from app.infrastructure.course import CourseDTO
+from app.infrastructure.course.course_dto import Category, User
+
 from app.usecase.course import CourseUpdateModel
 
 course_dto_1 = CourseDTO(
