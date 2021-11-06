@@ -21,8 +21,10 @@ class CourseQueryService(ABC):
         creator_id: Optional[str],
         colab_id: Optional[str],
         category: Optional[str],
+        language: Optional[str],
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
+        text: Optional[str],
     ) -> List[CourseReadModel]:
         raise NotImplementedError
 
