@@ -23,8 +23,10 @@ class CourseQueryUseCase(ABC):
         creator_id: Optional[str],
         colab_id: Optional[str],
         category: Optional[str],
+        language: Optional[str],
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
+        text: Optional[str],
     ) -> List[CourseReadModel]:
         raise NotImplementedError
 
@@ -57,8 +59,10 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
         creator_id: Optional[str] = None,
         colab_id: Optional[str] = None,
         category: Optional[str] = None,
+        language: Optional[str] = None,
         ignore_free: Optional[bool] = None,
         ignore_paid: Optional[bool] = None,
+        text: Optional[str] = None,
     ) -> List[CourseReadModel]:
         try:
             courses = self.course_query_service.find_by_filters(
@@ -66,8 +70,10 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
                 creator_id=creator_id,
                 colab_id=colab_id,
                 category=category,
+                language=language,
                 ignore_free=ignore_free,
                 ignore_paid=ignore_paid,
+                text=text,
             )
         except:
             raise
