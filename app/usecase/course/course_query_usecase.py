@@ -21,6 +21,7 @@ class CourseQueryUseCase(ABC):
         self,
         name: Optional[str],
         creator_id: Optional[str],
+        colab_id: Optional[str],
         category: Optional[str],
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
@@ -54,6 +55,7 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
         self,
         name: Optional[str] = None,
         creator_id: Optional[str] = None,
+        colab_id: Optional[str] = None,
         category: Optional[str] = None,
         ignore_free: Optional[bool] = None,
         ignore_paid: Optional[bool] = None,
@@ -62,6 +64,7 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
             courses = self.course_query_service.find_by_filters(
                 name=name,
                 creator_id=creator_id,
+                colab_id=colab_id,
                 category=category,
                 ignore_free=ignore_free,
                 ignore_paid=ignore_paid,

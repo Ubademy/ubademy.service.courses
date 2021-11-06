@@ -1,5 +1,5 @@
 # ubademy.service.courses
-[![codecov](https://codecov.io/gh/Ubademy/ubademy.service.pytemplate/branch/master/graph/badge.svg?token=WOM0ZAP02J)](https://codecov.io/gh/Ubademy/ubademy.service.pytemplate) [![Tests](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/test.yml/badge.svg)](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/test.yml) [![Linters](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/linters.yml/badge.svg)](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/linters.yml) [![Deploy](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/deploy.yml/badge.svg)](https://github.com/Ubademy/ubademy.service.pytemplate/actions/workflows/deploy.yml)
+[![codecov](https://codecov.io/gh/Ubademy/ubademy.service.courses/branch/master/graph/badge.svg?token=WOM0ZAP02J)](https://codecov.io/gh/Ubademy/ubademy.service.courses) [![Tests](https://github.com/Ubademy/ubademy.service.courses/actions/workflows/test.yml/badge.svg)](https://github.com/Ubademy/ubademy.service.courses/actions/workflows/test.yml) [![Linters](https://github.com/Ubademy/ubademy.service.courses/actions/workflows/linters.yml/badge.svg)](https://github.com/Ubademy/ubademy.service.courses/actions/workflows/linters.yml) [![Deploy](https://github.com/Ubademy/ubademy.service.courses/actions/workflows/deploy.yml/badge.svg)](https://github.com/Ubademy/ubademy.service.courses/actions/workflows/deploy.yml)
 
 This is courses microservice.
 
@@ -19,28 +19,32 @@ Directory structure (based on [Onion Architecture](https://jeffreypalermo.com/20
 ├── main.py
 ├── app
 │   ├── domain
-│   │   └── course
-│   │       ├── course.py  # Entity
-│   │       ├── course_exception.py  # Exception definitions
-│   │       └── course_repository.py  # Repository interface
+│   │   ├── course
+│   │   │   ├── course.py  # Entity
+│   │   │   ├── course_exception.py  # Exception definitions
+│   │   │   └── course_repository.py  # Repository interface
+│   │   └── user
+│   │       └── course_exception.py  # Exception definitions
 │   ├── infrastructure
-│   │   └── sqlite
-│   │       ├── course
-│   │       │   ├── course_dto.py  # DTO using SQLAlchemy
-│   │       │   ├── course_query_service.py  # Query service implementation
-│   │       │   └── course_repository.py  # Repository implementation
-│   │       └── database.py
+│   │   ├── course
+│   │   │   ├── course_dto.py  # DTO using SQLAlchemy
+│   │   │   ├── course_query_service.py  # Query service implementation
+│   │   │   └── course_repository.py  # Repository implementation
+│   │   └── database.py
 │   ├── presentation
 │   │   └── schema
 │   │       └── course
 │   │           └── course_error_message.py
 │   └── usecase
-│       └── course
-│           ├── course_command_model.py  # Write models including schemas of the RESTFul API
-│           ├── course_command_usecase.py
-│           ├── course_query_model.py  # Read models including schemas
-│           ├── course_query_service.py  # Query service interface
-│           └── course_query_usecase.py
+│       ├── course
+│       │   ├── course_command_model.py  # Write models including schemas of the RESTFul API
+│       │   ├── course_command_usecase.py
+│       │   ├── course_query_model.py  # Read models including schemas
+│       │   ├── course_query_service.py  # Query service interface
+│       │   └── course_query_usecase.py
+│       └── user
+│           ├── user_query_model.py  # Read models including schemas
+│           └── user_query_usecase.py
 └── tests
 ```
 
