@@ -5,7 +5,6 @@ from sqlalchemy.exc import NoResultFound
 
 from app.domain.course import CourseNameAlreadyExistsError, CourseNotFoundError
 from app.infrastructure.course import CourseDTO, CourseRepositoryImpl
-
 from tests.parameters import (
     course_1,
     mock_filter_course_1,

@@ -158,6 +158,7 @@ async def get_courses(
 async def get_courses_filtering(
     name: Optional[str] = None,
     creator_id: Optional[str] = None,
+    colab_id: Optional[str] = None,
     category: Optional[str] = None,
     ignore_free: Optional[bool] = None,
     ignore_paid: Optional[bool] = None,
@@ -167,6 +168,7 @@ async def get_courses_filtering(
         courses = course_query_usecase.fetch_courses_by_filters(
             name=name,
             creator_id=creator_id,
+            colab_id=colab_id,
             category=category,
             ignore_free=ignore_free,
             ignore_paid=ignore_paid,
@@ -188,7 +190,7 @@ async def get_courses_filtering(
 
 
 @app.get(
-    "/courses/{course_id}",
+    "/courses/{id}",
     response_model=CourseReadModel,
     status_code=status.HTTP_200_OK,
     responses={
@@ -199,11 +201,11 @@ async def get_courses_filtering(
     tags=["courses"],
 )
 async def get_course(
-    course_id: str,
+    id: str,
     course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
-        course = course_query_usecase.fetch_course_by_id(course_id)
+        course = course_query_usecase.fetch_course_by_id(id)
 
     except CourseNotFoundError as e:
         raise HTTPException(
@@ -220,7 +222,7 @@ async def get_course(
 
 
 @app.get(
-    "/courses/{course_id}/students",
+    "/courses/{id}/students",
     response_model=List[UserReadModel],
     status_code=status.HTTP_200_OK,
     responses={
@@ -231,11 +233,11 @@ async def get_course(
     tags=["users"],
 )
 async def get_course_students(
-    course_id: str,
+    id: str,
     user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
 ):
     try:
-        students = user_query_usecase.fetch_students_by_id(course_id)
+        students = user_query_usecase.fetch_students_by_id(id)
 
     except CourseNotFoundError as e:
         raise HTTPException(
@@ -262,7 +264,7 @@ async def get_course_students(
 
 
 @app.post(
-    "/courses/{course_id}",
+    "/courses/{id}",
     response_model=UserReadModel,
     status_code=status.HTTP_201_CREATED,
     responses={
@@ -277,11 +279,11 @@ async def get_course_students(
 )
 async def add_user(
     data: UserReadModel,
-    course_id: str,
+    id: str,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
 ):
     try:
-        data.course_id = course_id
+        data.course_id = id
         user = course_command_usecase.add_user(data)
     except UserAlreadyInCourseError as e:
         raise HTTPException(
@@ -302,8 +304,8 @@ async def add_user(
     return user
 
 
-@app.delete(
-    "/courses/{course_id}/users/{user_id}",
+@app.patch(
+    "/courses/{id}/users/{user_id}",
     status_code=status.HTTP_202_ACCEPTED,
     responses={
         status.HTTP_404_NOT_FOUND: {
@@ -313,12 +315,12 @@ async def add_user(
     tags=["users"],
 )
 async def deactivate_user(
-    course_id: str,
+    id: str,
     user_id: str,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
 ):
     try:
-        course_command_usecase.deactivate_user_from_course(user_id, course_id)
+        course_command_usecase.deactivate_user_from_course(user_id, id)
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -332,7 +334,7 @@ async def deactivate_user(
 
 
 @app.get(
-    "/courses/{course_id}/colabs",
+    "/courses/{id}/colabs",
     response_model=List[UserReadModel],
     status_code=status.HTTP_200_OK,
     responses={
@@ -343,11 +345,11 @@ async def deactivate_user(
     tags=["users"],
 )
 async def get_course_colabs(
-    course_id: str,
+    id: str,
     user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
 ):
     try:
-        colabs = user_query_usecase.fetch_colabs_by_id(course_id)
+        colabs = user_query_usecase.fetch_colabs_by_id(id)
 
     except CourseNotFoundError as e:
         raise HTTPException(
@@ -374,7 +376,7 @@ async def get_course_colabs(
 
 
 @app.put(
-    "/courses/{course_id}",
+    "/courses/{id}",
     response_model=CourseReadModel,
     status_code=status.HTTP_202_ACCEPTED,
     responses={
@@ -385,12 +387,12 @@ async def get_course_colabs(
     tags=["courses"],
 )
 async def update_course(
-    course_id: str,
+    id: str,
     data: CourseUpdateModel,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
 ):
     try:
-        updated_course = course_command_usecase.update_course(course_id, data)
+        updated_course = course_command_usecase.update_course(id, data)
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -406,7 +408,7 @@ async def update_course(
 
 
 @app.delete(
-    "/courses/{course_id}",
+    "/courses/{id}",
     status_code=status.HTTP_202_ACCEPTED,
     responses={
         status.HTTP_404_NOT_FOUND: {
@@ -416,11 +418,11 @@ async def update_course(
     tags=["courses"],
 )
 async def delete_course(
-    course_id: str,
+    id: str,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
 ):
     try:
-        course_command_usecase.delete_course_by_id(course_id)
+        course_command_usecase.delete_course_by_id(id)
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
