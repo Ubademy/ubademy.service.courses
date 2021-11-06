@@ -43,8 +43,10 @@ class CourseQueryServiceImpl(CourseQueryService):
         creator_id: Optional[str],
         colab_id: Optional[str],
         category: Optional[str],
+        language: Optional[str],
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
+        text: Optional[str],
     ) -> List[CourseReadModel]:
         try:
             courses_q = self.session.query(CourseDTO)
@@ -53,7 +55,11 @@ class CourseQueryServiceImpl(CourseQueryService):
             if creator_id:
                 courses_q = courses_q.filter_by(creator_id=creator_id)
             if colab_id:
-                courses_q = courses_q.filter(CourseDTO.users.any(user_id=colab_id, role="colab"))
+                courses_q = courses_q.filter(
+                    CourseDTO.users.any(user_id=colab_id, role="colab")
+                )
+            if language:
+                courses_q = courses_q.filter_by(language=language)
             if ignore_free:
                 courses_q = courses_q.filter(CourseDTO.price > 0)
             if ignore_paid:
@@ -61,6 +67,11 @@ class CourseQueryServiceImpl(CourseQueryService):
             if category:
                 courses_q = courses_q.filter(
                     CourseDTO.categories.any(category=category)
+                )
+            if text:
+                courses_q = courses_q.filter(
+                    (CourseDTO.name.contains(text))  # type: ignore
+                    | (CourseDTO.description.contains(text))  # type: ignore
                 )
 
             course_dtos = courses_q.all()

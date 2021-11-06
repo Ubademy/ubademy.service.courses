@@ -160,18 +160,23 @@ async def get_courses_filtering(
     creator_id: Optional[str] = None,
     colab_id: Optional[str] = None,
     category: Optional[str] = None,
+    language: Optional[str] = None,
     free: Optional[bool] = False,
     paid: Optional[bool] = False,
+    text: Optional[str] = None,
     course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
+
     try:
         courses = course_query_usecase.fetch_courses_by_filters(
             name=name,
             creator_id=creator_id,
             colab_id=colab_id,
             category=category,
+            language=language,
             ignore_free=not free,
             ignore_paid=not paid,
+            text=text,
         )
 
     except Exception as e:

@@ -32,3 +32,6 @@ build:
 
 run:
 	$ docker-compose up
+
+all: fmt lint test build run
+
