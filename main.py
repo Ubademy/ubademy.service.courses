@@ -160,8 +160,8 @@ async def get_courses_filtering(
     creator_id: Optional[str] = None,
     colab_id: Optional[str] = None,
     category: Optional[str] = None,
-    ignore_free: Optional[bool] = None,
-    ignore_paid: Optional[bool] = None,
+    free: Optional[bool] = False,
+    paid: Optional[bool] = False,
     course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
@@ -170,8 +170,8 @@ async def get_courses_filtering(
             creator_id=creator_id,
             colab_id=colab_id,
             category=category,
-            ignore_free=ignore_free,
-            ignore_paid=ignore_paid,
+            ignore_free=not free,
+            ignore_paid=not paid,
         )
 
     except Exception as e:
