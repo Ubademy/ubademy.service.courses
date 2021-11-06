@@ -1,6 +1,6 @@
 from app.domain.course import Course
-from app.infrastructure.sqlite.course import CourseDTO
-from app.infrastructure.sqlite.course.course_dto import Category
+from app.infrastructure.course import CourseDTO
+from app.infrastructure.course.course_dto import Category
 
 
 class TestCourseDTO:

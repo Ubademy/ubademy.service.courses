@@ -41,6 +41,7 @@ class CourseQueryServiceImpl(CourseQueryService):
         self,
         name: Optional[str],
         creator_id: Optional[str],
+        colab_id: Optional[str],
         category: Optional[str],
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
@@ -51,6 +52,8 @@ class CourseQueryServiceImpl(CourseQueryService):
                 courses_q = courses_q.filter_by(name=name)
             if creator_id:
                 courses_q = courses_q.filter_by(creator_id=creator_id)
+            if colab_id:
+                courses_q = courses_q.filter(CourseDTO.users.any(user_id=colab_id, role="colab"))
             if ignore_free:
                 courses_q = courses_q.filter(CourseDTO.price > 0)
             if ignore_paid:

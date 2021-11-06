@@ -6,7 +6,7 @@ from sqlalchemy import BigInteger, Boolean, Column, Float, ForeignKey, String, T
 from sqlalchemy.orm import relationship
 
 from app.domain.course import Course
-from app.infrastructure.sqlite.database import Base
+from app.infrastructure.database import Base
 from app.usecase.course import CourseReadModel
 from app.usecase.user.user_query_model import UserReadModel
 

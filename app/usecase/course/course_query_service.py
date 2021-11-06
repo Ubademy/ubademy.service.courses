@@ -19,6 +19,7 @@ class CourseQueryService(ABC):
         self,
         name: Optional[str],
         creator_id: Optional[str],
+        colab_id: Optional[str],
         category: Optional[str],
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
