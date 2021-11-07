@@ -34,7 +34,9 @@ class CourseCommandUseCaseUnitOfWork(ABC):
 
 class CourseCommandUseCase(ABC):
     @abstractmethod
-    def create_course(self, data: CourseCreateModel) -> Optional[CourseReadModel]:
+    def create_course(
+        self, data: CourseCreateModel, creator_id: str
+    ) -> Optional[CourseReadModel]:
         raise NotImplementedError
 
     @abstractmethod
@@ -63,12 +65,14 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
     ):
         self.uow: CourseCommandUseCaseUnitOfWork = uow
 
-    def create_course(self, data: CourseCreateModel) -> Optional[CourseReadModel]:
+    def create_course(
+        self, data: CourseCreateModel, creator_id: str
+    ) -> Optional[CourseReadModel]:
         try:
             uuid = shortuuid.uuid()
             course = Course(
                 id=uuid,
-                creator_id=data.creator_id,
+                creator_id=creator_id,
                 name=data.name,
                 price=data.price,
                 language=data.language,
