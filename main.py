@@ -93,11 +93,12 @@ def course_command_usecase(
     tags=["courses"],
 )
 async def create_course(
+    creator_id: str,
     data: CourseCreateModel,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
 ):
     try:
-        course = course_command_usecase.create_course(data)
+        course = course_command_usecase.create_course(data, creator_id)
     except CourseNameAlreadyExistsError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
