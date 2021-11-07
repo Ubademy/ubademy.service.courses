@@ -30,7 +30,7 @@ class TestCourseCommandUseCase:
         )
         course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
 
-        course = course_command_usecase.create_course(course_1)
+        course = course_command_usecase.create_course(course_1, course_1.creator_id)
 
         assert course.name == course_1.name
         course_repository.find_by_name.assert_called_with(course_1.name)
@@ -50,7 +50,7 @@ class TestCourseCommandUseCase:
         course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
 
         with pytest.raises(CourseNameAlreadyExistsError):
-            course_command_usecase.create_course(course_1)
+            course_command_usecase.create_course(course_1, course_1.creator_id)
         course_repository.find_by_name.assert_called_with(course_1.name)
 
     def test_update_course_should_return_course(self):
