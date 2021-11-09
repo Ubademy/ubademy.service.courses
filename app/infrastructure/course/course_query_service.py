@@ -69,9 +69,10 @@ class CourseQueryServiceImpl(CourseQueryService):
                     CourseDTO.categories.any(category=category)
                 )
             if text:
+                text = "%" + text + "%"
                 courses_q = courses_q.filter(
-                    (CourseDTO.name.contains(text))  # type: ignore
-                    | (CourseDTO.description.contains(text))  # type: ignore
+                    (CourseDTO.name.ilike(text))  # type: ignore
+                    | (CourseDTO.description.ilike(text))  # type: ignore
                 )
 
             course_dtos = courses_q.all()
