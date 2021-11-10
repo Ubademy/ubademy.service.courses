@@ -1,10 +1,9 @@
 from pydantic import BaseModel, Field
 
 
-class UserReadModel(BaseModel):
+class UserCreateModel(BaseModel):
 
     id: str = Field(example="user_0")
-    course_id: str = Field(example="course_0")
     role: str = Field(example="student")
 
     class Config:
@@ -15,6 +14,3 @@ class UserReadModel(BaseModel):
 
     def is_colab(self):
         return self.role == "colab"
-
-    def get_id(self):
-        return self.id
