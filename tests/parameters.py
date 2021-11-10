@@ -13,6 +13,7 @@ course_dto_1 = CourseDTO(
     language="English",
     description="This is a course",
     categories=[Category(category="Programing")],
+    video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -25,6 +26,7 @@ course_1_update = CourseUpdateModel(
     language="English",
     description="This is a course",
     categories=["Programing"],
+    video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -37,6 +39,7 @@ course_1 = Course(
     language="English",
     description="This is a course",
     categories=["Programing"],
+    video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -49,6 +52,7 @@ course_dto_2 = CourseDTO(
     language="English",
     description="This is a course",
     categories=[],
+    video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -61,6 +65,7 @@ course_2 = CourseDTO(
     language="English",
     description="This is a course",
     categories=[],
+    video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -89,6 +94,7 @@ course_dto_no_students = CourseDTO(
     language="English",
     description="This is a course",
     categories=[],
+    video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     created_at=1614007224642,
     updated_at=1614007224642,
     users=[colab_1, colab_2],
@@ -118,6 +124,7 @@ course_dto_no_colabs = CourseDTO(
     language="English",
     description="This is a course",
     categories=[],
+    video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     created_at=1614007224642,
     updated_at=1614007224642,
     users=[student_1, student_2],

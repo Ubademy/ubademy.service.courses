@@ -59,6 +59,8 @@ class CourseRepositoryImpl(CourseRepository):
             if course_dto.categories:
                 self.session.query(Category).filter_by(course_id=course_dto.id).delete()
                 _course.categories = course_dto.categories
+            if course_dto.video:
+                _course.video = course_dto.video
         except:
             raise
 

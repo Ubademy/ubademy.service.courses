@@ -38,6 +38,7 @@ class CourseDTO(Base):
     price: Union[float, Column] = Column(Float, nullable=False)
     language: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     description: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
+    video: Union[str, Column] = Column(String, nullable=True, autoincrement=False)
     created_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
     updated_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
 
@@ -53,6 +54,7 @@ class CourseDTO(Base):
             language=self.language,
             description=self.description,
             categories=get_categories(self.categories),
+            video=self.video,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -66,6 +68,7 @@ class CourseDTO(Base):
             language=self.language,
             description=self.description,
             categories=get_categories(self.categories),
+            video=self.video,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -93,6 +96,7 @@ class CourseDTO(Base):
             language=course.language,
             description=course.description,
             categories=create_categories(course.id, course.categories),
+            video=course.video,
             created_at=course.created_at,
             updated_at=now,
         )
