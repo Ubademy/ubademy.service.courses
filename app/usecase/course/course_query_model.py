@@ -14,6 +14,7 @@ class CourseReadModel(BaseModel):
     language: str = Field(example="English")
     description: str = Field(example="Learn how to program with C")
     categories: List[str] = Field(example=["Programming"])
+    video: str = Field(example="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
     created_at: int = Field(example=1136214245000)
     updated_at: int = Field(example=1136214245000)
 
@@ -30,6 +31,7 @@ class CourseReadModel(BaseModel):
             language=course.language,
             description=course.description,
             categories=course.categories,
+            video=course.video,
             created_at=cast(int, course.created_at),
             updated_at=cast(int, course.updated_at),
         )

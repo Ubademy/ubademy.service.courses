@@ -13,6 +13,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
+            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         )
 
         assert course.id == "course_1"
@@ -32,6 +33,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
+            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         )
 
         course_2 = Course(
@@ -42,6 +44,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
+            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         )
 
         course_3 = Course(
@@ -52,6 +55,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
+            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         )
 
         assert course_1 == course_2
@@ -74,6 +78,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
+            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         )
 
         course.price = price
