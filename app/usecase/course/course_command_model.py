@@ -11,7 +11,7 @@ class CourseCreateModel(BaseModel):
     description: str = Field(example="Learn how to program with C")
     categories: List[str] = Field(example=["Programming"])
     video: str = Field(
-        default=None, example="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        default="", example="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
     )
 
 
