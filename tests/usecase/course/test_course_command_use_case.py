@@ -77,7 +77,7 @@ class TestCourseCommandUseCase:
         )
         course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
 
-        user = course_command_usecase.add_user(user_1)
+        user = course_command_usecase.add_user(user_1, user_1.course_id)
 
         session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
         assert user.id is user_1.id
