@@ -38,7 +38,7 @@ class CourseDTO(Base):
     price: Union[float, Column] = Column(Float, nullable=False)
     language: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     description: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
-    video: Union[str, Column] = Column(String, nullable=True, autoincrement=False)
+    video: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     created_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
     updated_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
 
