@@ -10,6 +10,9 @@ class CourseCreateModel(BaseModel):
     language: str = Field(example="English")
     description: str = Field(example="Learn how to program with C")
     categories: List[str] = Field(example=["Programming"])
+    video: str = Field(
+        default=None, example="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    )
 
 
 class CourseUpdateModel(BaseModel):
@@ -21,3 +24,6 @@ class CourseUpdateModel(BaseModel):
     language: str = Field(default=None, example="English")
     description: str = Field(default=None, example="Learn how to program with C")
     categories: List[str] = Field(default=None, example=["Programming"])
+    video: str = Field(
+        default=None, example="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    )
