@@ -14,8 +14,10 @@ class CourseCreateModel(BaseModel):
 
 class CourseUpdateModel(BaseModel):
 
-    name: str = Field(example="C Programming For Beginners - Master the C Language")
-    price: float = Field(ge=0, example=10)
-    language: str = Field(example="English")
-    description: str = Field(example="Learn how to program with C")
-    categories: List[str] = Field(example=["Programming"])
+    name: str = Field(
+        default=None, example="C Programming For Beginners - Master the C Language"
+    )
+    price: float = Field(default=None, ge=0, example=10)
+    language: str = Field(default=None, example="English")
+    description: str = Field(default=None, example="Learn how to program with C")
+    categories: List[str] = Field(default=None, example=["Programming"])
