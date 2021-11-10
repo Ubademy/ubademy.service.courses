@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from app.domain.course import Course
+from app.usecase.user.user_command_model import UserCreateModel
 from app.usecase.user.user_query_model import UserReadModel
 
 
@@ -27,7 +28,9 @@ class CourseRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def add_user(self, data: UserReadModel) -> Optional[UserReadModel]:
+    def add_user(
+        self, data: UserCreateModel, course_id: str
+    ) -> Optional[UserReadModel]:
         raise NotImplementedError
 
     @abstractmethod

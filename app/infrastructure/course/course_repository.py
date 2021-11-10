@@ -8,6 +8,7 @@ from app.domain.user.user_exception import UserAlreadyInCourseError
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
 from app.usecase.user.user_query_model import UserReadModel
 
+from ...usecase.user.user_command_model import UserCreateModel
 from .course_dto import Category, CourseDTO, User
 
 
@@ -63,17 +64,20 @@ class CourseRepositoryImpl(CourseRepository):
         except:
             raise
 
-    def add_user(self, data: UserReadModel) -> Optional[UserReadModel]:
+    def add_user(
+        self, data: UserCreateModel, course_id: str
+    ) -> Optional[UserReadModel]:
         try:
-            course = self.session.query(CourseDTO).filter_by(id=data.course_id).first()
+            course = self.session.query(CourseDTO).filter_by(id=course_id).first()
             if course.has_active_user_with_id(data.id):
                 raise UserAlreadyInCourseError
-            course.users.append(User.from_read_model(data))
+            user = UserReadModel(id=data.id, course_id=course_id, role=data.role)
+            course.users.append(User.from_read_model(user))
         except NoResultFound:
             raise CourseNotFoundError
         except:
             raise
-        return data
+        return user
 
     def deactivate_user_from_course(self, user_id, course_id):
         try:

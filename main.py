@@ -42,6 +42,7 @@ from app.usecase.course import (
     CourseReadModel,
     CourseUpdateModel,
 )
+from app.usecase.user.user_command_model import UserCreateModel
 from app.usecase.user.user_query_model import UserReadModel
 from app.usecase.user.user_query_usecase import UserQueryUseCase, UserQueryUseCaseImpl
 
@@ -229,7 +230,7 @@ async def get_course(
 
 @app.get(
     "/courses/{id}/students",
-    response_model=List[UserReadModel],
+    response_model=List[str],
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_404_NOT_FOUND: {
@@ -284,13 +285,12 @@ async def get_course_students(
     tags=["users"],
 )
 async def add_user(
-    data: UserReadModel,
+    data: UserCreateModel,
     id: str,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
 ):
     try:
-        data.course_id = id
-        user = course_command_usecase.add_user(data)
+        user = course_command_usecase.add_user(data=data, course_id=id)
     except UserAlreadyInCourseError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -341,7 +341,7 @@ async def deactivate_user(
 
 @app.get(
     "/courses/{id}/colabs",
-    response_model=List[UserReadModel],
+    response_model=List[str],
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_404_NOT_FOUND: {
