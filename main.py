@@ -381,7 +381,7 @@ async def get_course_colabs(
     return colabs
 
 
-@app.put(
+@app.patch(
     "/courses/{id}",
     response_model=CourseReadModel,
     status_code=status.HTTP_202_ACCEPTED,
