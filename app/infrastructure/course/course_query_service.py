@@ -7,7 +7,7 @@ from app.domain.user.user_exception import NoUsersInCourseError
 from app.usecase.course import CourseQueryService, CourseReadModel
 from app.usecase.user.user_query_model import UserReadModel
 
-from .course_dto import CourseDTO
+from .course_dto import Category, CourseDTO
 
 
 class CourseQueryServiceImpl(CourseQueryService):
@@ -36,6 +36,14 @@ class CourseQueryServiceImpl(CourseQueryService):
             raise
 
         return list(map(lambda course_dto: course_dto.to_read_model(), course_dtos))
+
+    def find_all_categories(self) -> List[str]:
+        try:
+            categories = self.session.query(Category).limit(100).all()
+        except:
+            raise
+
+        return list(map(lambda cat: cat.category, categories))
 
     def find_by_filters(
         self,

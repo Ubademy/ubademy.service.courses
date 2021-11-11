@@ -17,3 +17,10 @@ class CoursesNotFoundError(Exception):
 
     def __str__(self):
         return CoursesNotFoundError.message
+
+
+class CategoriesNotFoundError(Exception):
+    message = "No categories were found."
+
+    def __str__(self):
+        return CategoriesNotFoundError.message
