@@ -14,6 +14,7 @@ course_dto_1 = CourseDTO(
     description="This is a course",
     categories=[Category(category="Programing")],
     video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -27,6 +28,7 @@ course_1_update = CourseUpdateModel(
     description="This is a course",
     categories=["Programing"],
     video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -40,6 +42,7 @@ course_1 = Course(
     description="This is a course",
     categories=["Programing"],
     video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -53,6 +56,7 @@ course_dto_2 = CourseDTO(
     description="This is a course",
     categories=[],
     video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -66,6 +70,7 @@ course_2 = CourseDTO(
     description="This is a course",
     categories=[],
     video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -95,6 +100,7 @@ course_dto_no_students = CourseDTO(
     description="This is a course",
     categories=[],
     video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
     updated_at=1614007224642,
     users=[colab_1, colab_2],
@@ -125,6 +131,7 @@ course_dto_no_colabs = CourseDTO(
     description="This is a course",
     categories=[],
     video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
     updated_at=1614007224642,
     users=[student_1, student_2],
