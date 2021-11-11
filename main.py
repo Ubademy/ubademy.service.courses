@@ -37,10 +37,8 @@ from app.presentation.schema.content.content_error_message import (
     ErrorMessageChapterAlreadyInCourse,
 )
 from app.presentation.schema.course.course_error_message import (
-    ErrorMessageCategoriesNotFound,
     ErrorMessageCourseNameAlreadyExists,
     ErrorMessageCourseNotFound,
-    ErrorMessageCoursesNotFound,
 )
 from app.presentation.schema.user.user_error_message import (
     ErrorMessageUserAlreadyInCourse,
@@ -137,11 +135,6 @@ async def create_course(
     "/courses",
     response_model=List[CourseReadModel],
     status_code=status.HTTP_200_OK,
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "model": ErrorMessageCoursesNotFound,
-        },
-    },
     tags=["courses"],
 )
 async def get_courses(
@@ -157,10 +150,7 @@ async def get_courses(
         )
 
     if len(courses) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=CoursesNotFoundError.message,
-        )
+        logger.info(CoursesNotFoundError.message)
 
     return courses
 
@@ -169,11 +159,6 @@ async def get_courses(
     "/courses/",
     response_model=List[CourseReadModel],
     status_code=status.HTTP_200_OK,
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "model": ErrorMessageCoursesNotFound,
-        },
-    },
     tags=["courses"],
 )
 async def get_courses_filtering(
@@ -207,10 +192,7 @@ async def get_courses_filtering(
         )
 
     if courses is None or len(courses) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=CoursesNotFoundError.message,
-        )
+        logger.info(CoursesNotFoundError.message)
 
     return courses
 
@@ -330,7 +312,9 @@ def get_users(uids, request):
             ids = ids + i + ","
         logger.info(uids)
         return requests.get(
-            microservices.get("users") + "users/filter", headers=h, params={"ids": ids[:-1]}
+            microservices.get("users") + "users/filter",
+            headers=h,
+            params={"ids": ids[:-1]},
         )
     except:
         raise
@@ -362,15 +346,11 @@ async def get_course_students(
             detail=e.message,
         )
     except NoUsersInCourseError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
+        logger.info(e)
+        return []
     except NoStudentsInCourseError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
+        logger.info(e)
+        return []
     except Exception as e:
         logger.error(e)
         raise HTTPException(
@@ -406,15 +386,11 @@ async def get_course_colabs(
             detail=e.message,
         )
     except NoUsersInCourseError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
+        logger.info(e)
+        return []
     except NoColabsInCourseError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
+        logger.info(e)
+        return []
     except Exception as e:
         logger.error(e)
         raise HTTPException(
@@ -488,11 +464,6 @@ async def delete_course(
     "/courses/categories/",
     response_model=List[str],
     status_code=status.HTTP_200_OK,
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "model": ErrorMessageCategoriesNotFound,
-        },
-    },
     tags=["courses"],
 )
 async def get_categories(
@@ -508,10 +479,7 @@ async def get_categories(
         )
 
     if len(categories) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=CategoriesNotFoundError.message,
-        )
+        logger.info(CategoriesNotFoundError.message)
 
     return categories
 
