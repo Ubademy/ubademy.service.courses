@@ -594,6 +594,9 @@ async def get_content(
         status.HTTP_404_NOT_FOUND: {
             "model": ErrorMessageCourseNotFound,
         },
+        status.HTTP_409_CONFLICT: {
+            "model": ErrorMessageChapterAlreadyInCourse,
+        },
     },
     tags=["content"],
 )

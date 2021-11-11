@@ -8,8 +8,11 @@ from app.domain.course import Course, CourseNotFoundError, CourseRepository
 from app.domain.user.user_exception import UserAlreadyInCourseError
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
 from app.usecase.user.user_query_model import MiniUserReadModel
-from ...domain.content.content_exception import ChapterAlreadyInCourseError
 
+from ...domain.content.content_exception import (
+    ChapterAlreadyInCourseError,
+    ContentNotFoundError,
+)
 from ...usecase.content.content_command_model import (
     ContentCreateModel,
     ContentUpdateModel,
@@ -129,7 +132,9 @@ class CourseRepositoryImpl(CourseRepository):
         self, course_id: str, data: ContentUpdateModel, content_id: str
     ) -> Optional[ContentReadModel]:
         try:
-            _cont = self.session.query(Content).filter_by(id=content_id).one()
+            _cont = self.session.query(Content).filter_by(id=content_id).first()
+            if not _cont:
+                raise ContentNotFoundError
             if data.title:
                 _cont.title = data.title
             if data.active is not None:

@@ -2,8 +2,38 @@ from unittest.mock import MagicMock, Mock
 
 from app.domain.course import Course, CourseNotFoundError
 from app.infrastructure.course import CourseDTO
-from app.infrastructure.course.course_dto import Category, User
+from app.infrastructure.course.course_dto import Category, Content, User
+from app.usecase.content.content_command_model import (
+    ContentCreateModel,
+    ContentUpdateModel,
+)
 from app.usecase.course import CourseUpdateModel
+
+content_1 = ContentCreateModel(
+    title="FFT: Fast Fourier Transform",
+    chapter=2,
+    description="A fast Fourier transform (FFT) is an algorithm.",
+    video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
+)
+
+content_1_update = ContentUpdateModel(
+    title="a",
+    chapter=3,
+    description="b",
+    video="c",
+    image="d",
+)
+
+content_dto_1 = Content(
+    id="content_1",
+    title="FFT: Fast Fourier Transform",
+    chapter=1,
+    description="A fast Fourier transform (FFT) is an algorithm.",
+    video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
+    active=True,
+)
 
 course_dto_1 = CourseDTO(
     id="course_1",
@@ -15,6 +45,7 @@ course_dto_1 = CourseDTO(
     categories=[Category(category="Programing")],
     presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
+    content=[content_dto_1],
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -142,12 +173,24 @@ query_course_1 = MagicMock()
 query_course_1.one = Mock(return_value=course_dto_1)
 query_course_1.first = Mock(return_value=course_dto_1)
 
+query_content_1 = MagicMock()
+query_content_1.one = Mock(return_value=content_dto_1)
+query_content_1.first = Mock(return_value=content_dto_1)
+
 user_1 = User(
     id="user_0",
     user_id="user_0",
     course_id="course_1",
     role="student",
 )
+
+
+def mock_filter_course_1_content(id):
+    if id == course_dto_1.id:
+        return query_course_1
+    if id == content_dto_1.id:
+        return query_content_1
+    raise CourseNotFoundError
 
 
 def mock_filter_course_1(id):
