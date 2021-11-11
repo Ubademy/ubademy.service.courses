@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship
 from app.domain.course import Course
 from app.infrastructure.database import Base
 from app.usecase.course import CourseReadModel
-from app.usecase.user.user_query_model import UserReadModel
+from app.usecase.user.user_query_model import MiniUserReadModel
 
 
 def unixtimestamp() -> int:
@@ -126,8 +126,8 @@ class User(Base):
     role: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     active: Union[bool, Column] = Column(Boolean, nullable=False, autoincrement=False)
 
-    def to_read_model(self) -> UserReadModel:
-        return UserReadModel(
+    def to_read_model(self) -> MiniUserReadModel:
+        return MiniUserReadModel(
             id=self.user_id,
             course_id=self.course_id,
             role=self.role,
@@ -137,7 +137,7 @@ class User(Base):
         self.active = False
 
     @staticmethod
-    def from_read_model(user: UserReadModel) -> "User":
+    def from_read_model(user: MiniUserReadModel) -> "User":
         return User(
             id=shortuuid.uuid(),
             user_id=user.id,

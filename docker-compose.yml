@@ -18,6 +18,7 @@ services:
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/db
+      MICROSERVICES: '{"users": "https://ubademy-service-users.herokuapp.com/","courses": "https://ubademy-service-courses.herokuapp.com/",}'
     ports:
       - "8000:8000"
     depends_on:
