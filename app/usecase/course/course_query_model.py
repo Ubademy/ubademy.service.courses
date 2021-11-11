@@ -14,7 +14,9 @@ class CourseReadModel(BaseModel):
     language: str = Field(example="English")
     description: str = Field(example="Learn how to program with C")
     categories: List[str] = Field(example=["Programming"])
-    video: str = Field(example="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    presentation_video: str = Field(
+        example="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    )
     image: str = Field(
         example="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg"
     )
@@ -34,7 +36,7 @@ class CourseReadModel(BaseModel):
             language=course.language,
             description=course.description,
             categories=course.categories,
-            video=course.video,
+            presentation_video=course.presentation_video,
             image=course.image,
             created_at=cast(int, course.created_at),
             updated_at=cast(int, course.updated_at),
