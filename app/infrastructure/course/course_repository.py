@@ -8,9 +8,12 @@ from app.domain.course import Course, CourseNotFoundError, CourseRepository
 from app.domain.user.user_exception import UserAlreadyInCourseError
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
 from app.usecase.user.user_query_model import MiniUserReadModel
+from ...domain.content.content_exception import ChapterAlreadyInCourseError
 
-from ...domain.user.content.content_exception import ChapterAlreadyInCourseError
-from ...usecase.content.content_command_model import ContentCreateModel
+from ...usecase.content.content_command_model import (
+    ContentCreateModel,
+    ContentUpdateModel,
+)
 from ...usecase.content.content_query_model import ContentReadModel
 from ...usecase.user.user_command_model import UserCreateModel
 from .course_dto import Category, Content, CourseDTO, User
@@ -121,6 +124,35 @@ class CourseRepositoryImpl(CourseRepository):
         except:
             raise
         return content.to_read_model()
+
+    def update_content_from_course(
+        self, course_id: str, data: ContentUpdateModel, content_id: str
+    ) -> Optional[ContentReadModel]:
+        try:
+            _cont = self.session.query(Content).filter_by(id=content_id).one()
+            if data.title:
+                _cont.title = data.title
+            if data.active is not None:
+                _cont.active = data.active
+            if data.description:
+                _cont.description = data.description
+            if data.video:
+                _cont.video = data.video
+            if data.image:
+                _cont.image = data.image
+            if data.chapter is not None and int(data.chapter) is not int(_cont.chapter):
+                if (
+                    self.session.query(CourseDTO)
+                    .filter_by(id=course_id)
+                    .one()
+                    .has_content_with_chapter(data.chapter)
+                ):
+                    raise ChapterAlreadyInCourseError
+                _cont.chapter = data.chapter
+        except:
+            raise
+
+        return _cont.to_read_model()
 
 
 class CourseCommandUseCaseUnitOfWorkImpl(CourseCommandUseCaseUnitOfWork):

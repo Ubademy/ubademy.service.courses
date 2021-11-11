@@ -1,6 +1,6 @@
-from pydantic import Field, BaseModel
+from pydantic import BaseModel, Field
 
-from app.domain.user.content.content_exception import ChapterAlreadyInCourseError
+from app.domain.content.content_exception import ChapterAlreadyInCourseError
 
 
 class ErrorMessageChapterAlreadyInCourse(BaseModel):

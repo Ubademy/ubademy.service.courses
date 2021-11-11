@@ -10,7 +10,7 @@ from app.domain.course import (
     CourseRepository,
 )
 
-from ..content.content_command_model import ContentCreateModel
+from ..content.content_command_model import ContentCreateModel, ContentUpdateModel
 from ..content.content_query_model import ContentReadModel
 from ..user.user_command_model import UserCreateModel
 from ..user.user_query_model import MiniUserReadModel
@@ -64,6 +64,12 @@ class CourseCommandUseCase(ABC):
 
     @abstractmethod
     def add_content(self, data, course_id):
+        raise NotImplementedError
+
+    @abstractmethod
+    def update_content(
+        self, course_id: str, data: ContentUpdateModel, content_id: str
+    ) -> Optional[ContentReadModel]:
         raise NotImplementedError
 
 
@@ -191,3 +197,20 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
             raise
 
         return content
+
+    def update_content(
+        self, course_id: str, data: ContentUpdateModel, content_id: str
+    ) -> Optional[ContentReadModel]:
+        try:
+            existing_course = self.uow.course_repository.find_by_id(course_id)
+            if existing_course is None:
+                raise CourseNotFoundError
+            updated_content = self.uow.course_repository.update_content_from_course(
+                course_id=course_id, data=data, content_id=content_id
+            )
+            self.uow.commit()
+        except:
+            self.uow.rollback()
+            raise
+
+        return updated_content

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
+from ..content.content_query_model import ContentReadModel
 from ..user.user_query_model import MiniUserReadModel
 from .course_query_model import CourseReadModel
 
@@ -34,4 +35,8 @@ class CourseQueryService(ABC):
 
     @abstractmethod
     def find_users_by_id(self, id: str) -> List[MiniUserReadModel]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
         raise NotImplementedError

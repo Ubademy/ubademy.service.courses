@@ -194,9 +194,9 @@ class Content(Base):
     def to_read_model(self):
         return ContentReadModel(
             id=self.id,
-            title=self.id,
+            title=self.title,
             chapter=self.chapter,
             description=self.description,
             video=self.video,
-            image=self.video,
+            image=self.image,
         )

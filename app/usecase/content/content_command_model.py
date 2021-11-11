@@ -38,3 +38,4 @@ class ContentUpdateModel(BaseModel):
         default=None,
         example="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     )
+    active: bool = Field(default=None, example=True)
