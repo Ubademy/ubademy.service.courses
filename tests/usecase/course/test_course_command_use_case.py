@@ -8,11 +8,15 @@ from app.infrastructure.course import (
     CourseDTO,
     CourseRepositoryImpl,
 )
+from app.infrastructure.course.course_dto import Content
 from app.usecase.course import CourseCommandUseCaseImpl
 from tests.parameters import (
+    content_1,
+    content_1_update,
     course_1,
     course_1_update,
     mock_filter_course_1,
+    mock_filter_course_1_content,
     mock_filter_course_1_name_course,
     mock_filter_course_1_with_user,
     user_1,
@@ -68,6 +72,19 @@ class TestCourseCommandUseCase:
 
         assert course.name == course_1.name
 
+    def test_delete_course_by_id(self):
+        session = MagicMock()
+        session.query(CourseDTO).filter_by = Mock(side_effect=mock_filter_course_1)
+        course_repository = CourseRepositoryImpl(session)
+        uow = CourseCommandUseCaseUnitOfWorkImpl(
+            session=session, course_repository=course_repository
+        )
+        course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
+
+        course_command_usecase.delete_course_by_id(id=course_1.id)
+
+        session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
+
     def test_add_user_should_return_user(self):
         session = MagicMock()
         session.query(CourseDTO).filter_by = Mock(side_effect=mock_filter_course_1)
@@ -100,3 +117,35 @@ class TestCourseCommandUseCase:
         session.query(CourseDTO).filter_by.assert_called_with(
             course_id="course_1", user_id="user_1"
         )
+
+    def test_add_content_should_return_content(self):
+        session = MagicMock()
+        session.query(CourseDTO).filter_by = Mock(side_effect=mock_filter_course_1)
+        course_repository = CourseRepositoryImpl(session)
+        uow = CourseCommandUseCaseUnitOfWorkImpl(
+            session=session, course_repository=course_repository
+        )
+        course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
+
+        content = course_command_usecase.add_content(content_1, "course_1")
+
+        session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
+        assert content.title is content_1.title
+
+    def test_update_content_should_return_updated_content(self):
+        session = MagicMock()
+        session.query(CourseDTO).filter_by = Mock(
+            side_effect=mock_filter_course_1_content
+        )
+        course_repository = CourseRepositoryImpl(session)
+        uow = CourseCommandUseCaseUnitOfWorkImpl(
+            session=session, course_repository=course_repository
+        )
+        course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
+
+        content = course_command_usecase.update_content(
+            course_id="course_1", data=content_1_update, content_id="content_1"
+        )
+
+        session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
+        assert content.title is "a"

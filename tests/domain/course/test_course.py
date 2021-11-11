@@ -13,7 +13,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
-            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
         )
 
@@ -34,7 +34,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
-            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
         )
 
@@ -46,7 +46,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
-            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
         )
 
@@ -58,7 +58,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
-            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
         )
 
@@ -82,7 +82,7 @@ class TestCourse:
             language="English",
             description="This is a course",
             categories=["Programming"],
-            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
         )
 

@@ -13,7 +13,7 @@ class TestCourseDTO:
             language="English",
             description="This is a course",
             categories=[Category(category="Programing")],
-            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             created_at=1614007224642,
             updated_at=9999994444444,
@@ -28,7 +28,9 @@ class TestCourseDTO:
         assert course.language == "English"
         assert course.description == "This is a course"
         assert course.categories == ["Programing"]
-        assert course.video == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        assert (
+            course.presentation_video == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        )
         assert course.created_at == 1614007224642
         assert course.updated_at == 9999994444444
 
@@ -41,7 +43,7 @@ class TestCourseDTO:
             language="English",
             description="This is a course",
             categories=[Category(category="Programing"), Category(category="Beginner")],
-            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             created_at=1614007224642,
             updated_at=9999994444444,
@@ -56,7 +58,9 @@ class TestCourseDTO:
         assert course.language == "English"
         assert course.description == "This is a course"
         assert course.categories == ["Programing", "Beginner"]
-        assert course.video == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        assert (
+            course.presentation_video == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        )
         assert course.created_at == 1614007224642
         assert course.updated_at == 9999994444444
 
@@ -69,7 +73,7 @@ class TestCourseDTO:
             language="English",
             description="This is a course",
             categories=["Programing", "Beginner"],
-            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
         )
 
@@ -83,7 +87,10 @@ class TestCourseDTO:
         assert course_dto.description == "This is a course"
         assert course_dto.created_at == course_dto.updated_at
         assert course_dto.get_categories() == ["Programing", "Beginner"]
-        assert course_dto.video == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        assert (
+            course_dto.presentation_video
+            == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        )
 
     def test_from_entity_should_create_dto_instance_preserves_created_at(self):
         course = Course(
@@ -94,7 +101,7 @@ class TestCourseDTO:
             language="English",
             description="This is a course",
             categories=["Programing"],
-            video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             created_at=1614007224642,
             updated_at=9999994444444,
@@ -110,7 +117,10 @@ class TestCourseDTO:
         assert course_dto.description == "This is a course"
         assert course_dto.created_at == 1614007224642
         assert course_dto.get_categories() == ["Programing"]
-        assert course_dto.video == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        assert (
+            course_dto.presentation_video
+            == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        )
         assert (
             course_dto.image
             == "https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg"

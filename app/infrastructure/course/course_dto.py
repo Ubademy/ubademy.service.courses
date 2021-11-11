@@ -7,6 +7,8 @@ from sqlalchemy.orm import relationship
 
 from app.domain.course import Course
 from app.infrastructure.database import Base
+from app.usecase.content.content_command_model import ContentCreateModel
+from app.usecase.content.content_query_model import ContentReadModel
 from app.usecase.course import CourseReadModel
 from app.usecase.user.user_query_model import MiniUserReadModel
 
@@ -38,13 +40,16 @@ class CourseDTO(Base):
     price: Union[float, Column] = Column(Float, nullable=False)
     language: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     description: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
-    video: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    presentation_video: Union[str, Column] = Column(
+        String, nullable=False, autoincrement=False
+    )
     image: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     created_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
     updated_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
 
     categories = relationship("Category", cascade="all, delete")
     users = relationship("User", cascade="all, delete")
+    content = relationship("Content", cascade="all, delete")
 
     def to_entity(self) -> Course:
         return Course(
@@ -55,7 +60,7 @@ class CourseDTO(Base):
             language=self.language,
             description=self.description,
             categories=get_categories(self.categories),
-            video=self.video,
+            presentation_video=self.presentation_video,
             image=self.image,
             created_at=self.created_at,
             updated_at=self.updated_at,
@@ -70,7 +75,7 @@ class CourseDTO(Base):
             language=self.language,
             description=self.description,
             categories=get_categories(self.categories),
-            video=self.video,
+            presentation_video=self.presentation_video,
             image=self.image,
             created_at=self.created_at,
             updated_at=self.updated_at,
@@ -86,6 +91,12 @@ class CourseDTO(Base):
             > 0
         )
 
+    def has_content_with_chapter(self, chapter: int):
+        for i in self.content:
+            if int(i.chapter) == chapter:
+                return True
+        return False
+
     @staticmethod
     def from_entity(course: Course) -> "CourseDTO":
         now = unixtimestamp()
@@ -99,7 +110,7 @@ class CourseDTO(Base):
             language=course.language,
             description=course.description,
             categories=create_categories(course.id, course.categories),
-            video=course.video,
+            presentation_video=course.presentation_video,
             image=course.image,
             created_at=course.created_at,
             updated_at=now,
@@ -148,4 +159,44 @@ class User(Base):
             course_id=user.course_id,
             role=user.role,
             active=True,
+        )
+
+
+class Content(Base):
+
+    __tablename__ = "content"
+    id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
+    title: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    course_id: Union[str, Column] = Column(
+        String, ForeignKey("courses.id"), autoincrement=False
+    )
+    chapter: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    description: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
+    video: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    image: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    active: Union[bool, Column] = Column(Boolean, nullable=False, autoincrement=False)
+
+    @staticmethod
+    def from_create_model(
+        id: str, content: ContentCreateModel, course_id: str
+    ) -> "Content":
+        return Content(
+            id=id,
+            title=content.title,
+            course_id=course_id,
+            chapter=content.chapter,
+            description=content.description,
+            video=content.video,
+            image=content.image,
+            active=True,
+        )
+
+    def to_read_model(self):
+        return ContentReadModel(
+            id=self.id,
+            title=self.title,
+            chapter=self.chapter,
+            description=self.description,
+            video=self.video,
+            image=self.image,
         )

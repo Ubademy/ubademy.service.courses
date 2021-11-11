@@ -7,6 +7,7 @@ from app.domain.user.user_exception import NoUsersInCourseError
 from app.usecase.course import CourseQueryService, CourseReadModel
 from app.usecase.user.user_query_model import MiniUserReadModel
 
+from ...usecase.content.content_query_model import ContentReadModel
 from .course_dto import Category, CourseDTO
 
 
@@ -99,3 +100,13 @@ class CourseQueryServiceImpl(CourseQueryService):
             raise
 
         return list(map(lambda user: user.to_read_model(), users))
+
+    def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
+        try:
+            course = self.session.query(CourseDTO).filter_by(id=id).one()
+            content = list(filter(lambda c: c.active, course.content))
+
+        except:
+            raise
+
+        return list(map(lambda c: c.to_read_model(), content))

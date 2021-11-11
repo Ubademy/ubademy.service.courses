@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from app.domain.course import CourseNotFoundError
 
+from ..content.content_query_model import ContentReadModel
 from .course_query_model import CourseReadModel
 from .course_query_service import CourseQueryService
 
@@ -32,6 +33,10 @@ class CourseQueryUseCase(ABC):
         ignore_paid: Optional[bool],
         text: Optional[str],
     ) -> List[CourseReadModel]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
         raise NotImplementedError
 
 
@@ -91,3 +96,11 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
             raise
 
         return courses
+
+    def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
+        try:
+            content = self.course_query_service.fetch_content_by_id(id)
+        except:
+            raise
+
+        return content
