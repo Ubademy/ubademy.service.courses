@@ -325,9 +325,12 @@ except KeyError as e:
 def get_users(uids, request):
     try:
         h = {"authorization": request.headers.get("authorization")}
+        ids = ""
+        for i in uids:
+            ids = ids + i + ","
         logger.info(uids)
         return requests.get(
-            microservices.get("users") + "users/filter", headers=h, params={"ids": uids}
+            microservices.get("users") + "users/filter", headers=h, params={"ids": ids[:-1]}
         )
     except:
         raise
