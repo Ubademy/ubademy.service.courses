@@ -1,9 +1,14 @@
+import ast
+import json
 import logging
+import os
 from logging import config
 from typing import Iterator, List, Optional
 
+import requests
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm.session import Session
+from starlette.requests import Request
 
 from app.domain.course import (
     CourseNameAlreadyExistsError,
@@ -45,7 +50,7 @@ from app.usecase.course import (
     CourseUpdateModel,
 )
 from app.usecase.user.user_command_model import UserCreateModel
-from app.usecase.user.user_query_model import UserReadModel
+from app.usecase.user.user_query_model import MiniUserReadModel, UserReadModel
 from app.usecase.user.user_query_usecase import UserQueryUseCase, UserQueryUseCaseImpl
 
 config.fileConfig("logging.conf", disable_existing_loggers=False)
@@ -230,51 +235,9 @@ async def get_course(
     return course
 
 
-@app.get(
-    "/courses/{id}/students",
-    response_model=List[str],
-    status_code=status.HTTP_200_OK,
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "model": ErrorMessageCourseNotFound,
-        },
-    },
-    tags=["users"],
-)
-async def get_course_students(
-    id: str,
-    user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
-):
-    try:
-        students = user_query_usecase.fetch_students_by_id(id)
-
-    except CourseNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
-    except NoUsersInCourseError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
-    except NoStudentsInCourseError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
-    except Exception as e:
-        logger.error(e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-    return students
-
-
 @app.post(
     "/courses/{id}",
-    response_model=UserReadModel,
+    response_model=MiniUserReadModel,
     status_code=status.HTTP_201_CREATED,
     responses={
         status.HTTP_409_CONFLICT: {
@@ -341,9 +304,70 @@ async def deactivate_user(
         )
 
 
+try:
+    microservices = ast.literal_eval(os.environ["MICROSERVICES"])
+except KeyError as e:
+    microservices = {}
+
+
+def get_users(uids, request):
+    try:
+        h = {"authorization": request.headers.get("authorization")}
+        logger.info(uids)
+        return requests.get(
+            microservices.get("users") + "users/filter", headers=h, params={"ids": uids}
+        )
+    except:
+        raise
+
+
+@app.get(
+    "/courses/{id}/students",
+    response_model=List[UserReadModel],
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+    },
+    tags=["users"],
+)
+async def get_course_students(
+    id: str,
+    request: Request,
+    user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
+):
+    try:
+        students = user_query_usecase.fetch_students_by_id(id)
+        server_response = get_users(students, request)
+
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except NoUsersInCourseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except NoStudentsInCourseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return json.loads(server_response.text)
+
+
 @app.get(
     "/courses/{id}/colabs",
-    response_model=List[str],
+    response_model=List[UserReadModel],
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_404_NOT_FOUND: {
@@ -354,10 +378,12 @@ async def deactivate_user(
 )
 async def get_course_colabs(
     id: str,
+    request: Request,
     user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
 ):
     try:
         colabs = user_query_usecase.fetch_colabs_by_id(id)
+        server_response = get_users(colabs, request)
 
     except CourseNotFoundError as e:
         raise HTTPException(
@@ -380,7 +406,7 @@ async def get_course_colabs(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-    return colabs
+    return json.loads(server_response.text)
 
 
 @app.patch(
