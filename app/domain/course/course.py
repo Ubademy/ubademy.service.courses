@@ -12,6 +12,7 @@ class Course:
         description: str,
         categories: List[str],
         video: str,
+        image: str,
         created_at: Optional[int] = None,
         updated_at: Optional[int] = None,
     ):
@@ -23,6 +24,7 @@ class Course:
         self.description: str = description
         self.categories: List[str] = categories
         self.video: str = video
+        self.image: str = image
         self.created_at: Optional[int] = created_at
         self.updated_at: Optional[int] = updated_at
 

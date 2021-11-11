@@ -82,6 +82,7 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
                 description=data.description,
                 categories=data.categories,
                 video=data.video,
+                image=data.image,
             )
 
             existing_course = self.uow.course_repository.find_by_name(data.name)
@@ -114,6 +115,7 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
                 description=data.description,
                 categories=data.categories,
                 video=data.video,
+                image=data.image,
                 created_at=existing_course.created_at,
             )
 

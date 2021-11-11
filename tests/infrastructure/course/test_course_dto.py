@@ -14,6 +14,7 @@ class TestCourseDTO:
             description="This is a course",
             categories=[Category(category="Programing")],
             video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             created_at=1614007224642,
             updated_at=9999994444444,
         )
@@ -41,6 +42,7 @@ class TestCourseDTO:
             description="This is a course",
             categories=[Category(category="Programing"), Category(category="Beginner")],
             video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             created_at=1614007224642,
             updated_at=9999994444444,
         )
@@ -68,6 +70,7 @@ class TestCourseDTO:
             description="This is a course",
             categories=["Programing", "Beginner"],
             video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
         )
 
         course_dto = CourseDTO.from_entity(course)
@@ -92,6 +95,7 @@ class TestCourseDTO:
             description="This is a course",
             categories=["Programing"],
             video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             created_at=1614007224642,
             updated_at=9999994444444,
         )
@@ -107,3 +111,7 @@ class TestCourseDTO:
         assert course_dto.created_at == 1614007224642
         assert course_dto.get_categories() == ["Programing"]
         assert course_dto.video == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        assert (
+            course_dto.image
+            == "https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg"
+        )
