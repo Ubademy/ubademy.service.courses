@@ -13,6 +13,10 @@ class CourseCreateModel(BaseModel):
     video: str = Field(
         default="", example="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
     )
+    image: str = Field(
+        default="",
+        example="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
+    )
 
 
 class CourseUpdateModel(BaseModel):
@@ -26,4 +30,8 @@ class CourseUpdateModel(BaseModel):
     categories: List[str] = Field(default=None, example=["Programming"])
     video: str = Field(
         default=None, example="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    )
+    image: str = Field(
+        default="",
+        example="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     )

@@ -61,6 +61,8 @@ class CourseRepositoryImpl(CourseRepository):
                 _course.categories = course_dto.categories
             if course_dto.video:
                 _course.video = course_dto.video
+            if course_dto.image:
+                _course.image = course_dto.image
         except:
             raise
 

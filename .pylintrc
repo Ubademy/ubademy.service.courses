@@ -15,3 +15,4 @@ disable=
     R0401, # cyclic-import
     R0801, # duplicate-code
     R0902, # too-many-instance-attributes
+    C0301, # line-too-long
