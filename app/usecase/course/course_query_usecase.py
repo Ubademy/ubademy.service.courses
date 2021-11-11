@@ -17,6 +17,10 @@ class CourseQueryUseCase(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def fetch_categories(self):
+        raise NotImplementedError
+
+    @abstractmethod
     def fetch_courses_by_filters(
         self,
         name: Optional[str],
@@ -52,6 +56,14 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
             raise
 
         return courses
+
+    def fetch_categories(self) -> List[str]:
+        try:
+            categories = self.course_query_service.find_all_categories()
+        except:
+            raise
+
+        return categories
 
     def fetch_courses_by_filters(
         self,

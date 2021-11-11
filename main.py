@@ -11,6 +11,7 @@ from app.domain.course import (
     CourseRepository,
     CoursesNotFoundError,
 )
+from app.domain.course.course_exception import CategoriesNotFoundError
 from app.domain.user.user_exception import (
     NoColabsInCourseError,
     NoStudentsInCourseError,
@@ -24,6 +25,7 @@ from app.infrastructure.course import (
 )
 from app.infrastructure.database import SessionLocal, create_tables
 from app.presentation.schema.course.course_error_message import (
+    ErrorMessageCategoriesNotFound,
     ErrorMessageCourseNameAlreadyExists,
     ErrorMessageCourseNotFound,
     ErrorMessageCoursesNotFound,
@@ -439,3 +441,35 @@ async def delete_course(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+
+@app.get(
+    "/courses/categories/",
+    response_model=List[str],
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCategoriesNotFound,
+        },
+    },
+    tags=["courses"],
+)
+async def get_categories(
+    course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
+):
+    try:
+        categories = course_query_usecase.fetch_categories()
+
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    if len(categories) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=CategoriesNotFoundError.message,
+        )
+
+    return categories

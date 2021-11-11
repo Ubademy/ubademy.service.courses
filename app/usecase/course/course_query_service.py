@@ -15,6 +15,10 @@ class CourseQueryService(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def find_all_categories(self) -> List[str]:
+        raise NotImplementedError
+
+    @abstractmethod
     def find_by_filters(
         self,
         name: Optional[str],
