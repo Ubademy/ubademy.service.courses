@@ -43,7 +43,7 @@ class CourseQueryServiceImpl(CourseQueryService):
         except:
             raise
 
-        return list(map(lambda cat: cat.category, categories))
+        return list(dict.fromkeys(list(map(lambda cat: cat.category, categories))))
 
     def find_by_filters(
         self,
