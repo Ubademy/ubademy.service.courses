@@ -5,7 +5,7 @@ from sqlalchemy.orm.session import Session
 
 from app.domain.user.user_exception import NoUsersInCourseError
 from app.usecase.course import CourseQueryService, CourseReadModel
-from app.usecase.user.user_query_model import UserReadModel
+from app.usecase.user.user_query_model import MiniUserReadModel
 
 from .course_dto import Category, CourseDTO
 
@@ -89,7 +89,7 @@ class CourseQueryServiceImpl(CourseQueryService):
 
         return list(map(lambda course_dto: course_dto.to_read_model(), course_dtos))
 
-    def find_users_by_id(self, id: str) -> List[UserReadModel]:
+    def find_users_by_id(self, id: str) -> List[MiniUserReadModel]:
         try:
             course = self.session.query(CourseDTO).filter_by(id=id).one()
             users = list(filter(lambda user: user.active, course.users))

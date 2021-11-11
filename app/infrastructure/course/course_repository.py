@@ -6,7 +6,7 @@ from sqlalchemy.orm.session import Session
 from app.domain.course import Course, CourseNotFoundError, CourseRepository
 from app.domain.user.user_exception import UserAlreadyInCourseError
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
-from app.usecase.user.user_query_model import UserReadModel
+from app.usecase.user.user_query_model import MiniUserReadModel
 
 from ...usecase.user.user_command_model import UserCreateModel
 from .course_dto import Category, CourseDTO, User
@@ -73,12 +73,12 @@ class CourseRepositoryImpl(CourseRepository):
 
     def add_user(
         self, data: UserCreateModel, course_id: str
-    ) -> Optional[UserReadModel]:
+    ) -> Optional[MiniUserReadModel]:
         try:
             course = self.session.query(CourseDTO).filter_by(id=course_id).first()
             if course.has_active_user_with_id(data.id):
                 raise UserAlreadyInCourseError
-            user = UserReadModel(id=data.id, course_id=course_id, role=data.role)
+            user = MiniUserReadModel(id=data.id, course_id=course_id, role=data.role)
             course.users.append(User.from_read_model(user))
         except NoResultFound:
             raise CourseNotFoundError

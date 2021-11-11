@@ -3,7 +3,7 @@ from typing import Optional
 
 from app.domain.course import Course
 from app.usecase.user.user_command_model import UserCreateModel
-from app.usecase.user.user_query_model import UserReadModel
+from app.usecase.user.user_query_model import MiniUserReadModel
 
 
 class CourseRepository(ABC):
@@ -30,7 +30,7 @@ class CourseRepository(ABC):
     @abstractmethod
     def add_user(
         self, data: UserCreateModel, course_id: str
-    ) -> Optional[UserReadModel]:
+    ) -> Optional[MiniUserReadModel]:
         raise NotImplementedError
 
     @abstractmethod
