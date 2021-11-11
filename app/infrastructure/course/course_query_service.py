@@ -7,6 +7,7 @@ from app.domain.user.user_exception import NoUsersInCourseError
 from app.usecase.course import CourseQueryService, CourseReadModel
 from app.usecase.user.user_query_model import MiniUserReadModel
 
+from ...domain.course import CourseNotFoundError
 from ...usecase.content.content_query_model import ContentReadModel
 from .course_dto import Category, CourseDTO
 
@@ -92,7 +93,9 @@ class CourseQueryServiceImpl(CourseQueryService):
 
     def find_users_by_id(self, id: str) -> List[MiniUserReadModel]:
         try:
-            course = self.session.query(CourseDTO).filter_by(id=id).one()
+            course = self.session.query(CourseDTO).filter_by(id=id).first()
+            if not course:
+                raise CourseNotFoundError
             users = list(filter(lambda user: user.active, course.users))
             if len(users) == 0:
                 raise NoUsersInCourseError
@@ -103,7 +106,9 @@ class CourseQueryServiceImpl(CourseQueryService):
 
     def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
         try:
-            course = self.session.query(CourseDTO).filter_by(id=id).one()
+            course = self.session.query(CourseDTO).filter_by(id=id).first()
+            if not course:
+                raise CourseNotFoundError
             content = list(filter(lambda c: c.active, course.content))
 
         except:
