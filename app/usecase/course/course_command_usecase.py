@@ -10,6 +10,8 @@ from app.domain.course import (
     CourseRepository,
 )
 
+from ..content.content_command_model import ContentCreateModel
+from ..content.content_query_model import ContentReadModel
 from ..user.user_command_model import UserCreateModel
 from ..user.user_query_model import MiniUserReadModel
 from .course_command_model import CourseCreateModel, CourseUpdateModel
@@ -60,6 +62,10 @@ class CourseCommandUseCase(ABC):
     def deactivate_user_from_course(self, user_id: str, course_id: str):
         raise NotImplementedError
 
+    @abstractmethod
+    def add_content(self, data, course_id):
+        raise NotImplementedError
+
 
 class CourseCommandUseCaseImpl(CourseCommandUseCase):
     def __init__(
@@ -81,7 +87,7 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
                 language=data.language,
                 description=data.description,
                 categories=data.categories,
-                video=data.video,
+                presentation_video=data.presentation_video,
                 image=data.image,
             )
 
@@ -114,7 +120,7 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
                 language=data.language,
                 description=data.description,
                 categories=data.categories,
-                video=data.video,
+                presentation_video=data.presentation_video,
                 image=data.image,
                 created_at=existing_course.created_at,
             )
@@ -150,13 +156,13 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
             course = self.uow.course_repository.find_by_id(course_id)
             if course is None:
                 raise CourseNotFoundError
-            self.uow.course_repository.add_user(data=data, course_id=course_id)
+            user = self.uow.course_repository.add_user(data=data, course_id=course_id)
             self.uow.commit()
         except:
             self.uow.rollback()
             raise
 
-        return MiniUserReadModel(id=data.id, course_id=course_id, role=data.role)
+        return user
 
     def deactivate_user_from_course(self, user_id: str, course_id: str):
         try:
@@ -168,3 +174,20 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
         except:
             self.uow.rollback()
             raise
+
+    def add_content(
+        self, data: ContentCreateModel, course_id: str
+    ) -> Optional[ContentReadModel]:
+        try:
+            course = self.uow.course_repository.find_by_id(course_id)
+            if course is None:
+                raise CourseNotFoundError
+            content = self.uow.course_repository.add_content(
+                data=data, course_id=course_id
+            )
+            self.uow.commit()
+        except:
+            self.uow.rollback()
+            raise
+
+        return content

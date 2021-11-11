@@ -17,6 +17,7 @@ from app.domain.course import (
     CoursesNotFoundError,
 )
 from app.domain.course.course_exception import CategoriesNotFoundError
+from app.domain.user.content.content_exception import ChapterAlreadyInCourseError
 from app.domain.user.user_exception import (
     NoColabsInCourseError,
     NoStudentsInCourseError,
@@ -29,6 +30,9 @@ from app.infrastructure.course import (
     CourseRepositoryImpl,
 )
 from app.infrastructure.database import SessionLocal, create_tables
+from app.presentation.schema.content.content_error_message import (
+    ErrorMessageChapterAlreadyInCourse,
+)
 from app.presentation.schema.course.course_error_message import (
     ErrorMessageCategoriesNotFound,
     ErrorMessageCourseNameAlreadyExists,
@@ -38,6 +42,8 @@ from app.presentation.schema.course.course_error_message import (
 from app.presentation.schema.user.user_error_message import (
     ErrorMessageUserAlreadyInCourse,
 )
+from app.usecase.content.content_command_model import ContentCreateModel
+from app.usecase.content.content_query_model import ContentReadModel
 from app.usecase.course import (
     CourseCommandUseCase,
     CourseCommandUseCaseImpl,
@@ -499,3 +505,43 @@ async def get_categories(
         )
 
     return categories
+
+
+@app.post(
+    "/courses/{id}/content",
+    response_model=ContentReadModel,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+        status.HTTP_409_CONFLICT: {
+            "model": ErrorMessageChapterAlreadyInCourse,
+        },
+    },
+    tags=["content"],
+)
+async def add_content(
+    data: ContentCreateModel,
+    id: str,
+    course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+):
+    try:
+        content = course_command_usecase.add_content(data=data, course_id=id)
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except ChapterAlreadyInCourseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return content

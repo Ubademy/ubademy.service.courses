@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from app.domain.course import Course
+from app.usecase.content.content_command_model import ContentCreateModel
+from app.usecase.content.content_query_model import ContentReadModel
 from app.usecase.user.user_command_model import UserCreateModel
 from app.usecase.user.user_query_model import MiniUserReadModel
 
@@ -35,4 +37,10 @@ class CourseRepository(ABC):
 
     @abstractmethod
     def deactivate_user_from_course(self, user_id, course_id):
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_content(
+        self, data: ContentCreateModel, course_id: str
+    ) -> Optional[ContentReadModel]:
         raise NotImplementedError

@@ -1,5 +1,6 @@
 from typing import Optional
 
+import shortuuid
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 
@@ -8,8 +9,11 @@ from app.domain.user.user_exception import UserAlreadyInCourseError
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
 from app.usecase.user.user_query_model import MiniUserReadModel
 
+from ...domain.user.content.content_exception import ChapterAlreadyInCourseError
+from ...usecase.content.content_command_model import ContentCreateModel
+from ...usecase.content.content_query_model import ContentReadModel
 from ...usecase.user.user_command_model import UserCreateModel
-from .course_dto import Category, CourseDTO, User
+from .course_dto import Category, Content, CourseDTO, User
 
 
 class CourseRepositoryImpl(CourseRepository):
@@ -59,8 +63,8 @@ class CourseRepositoryImpl(CourseRepository):
             if course_dto.categories:
                 self.session.query(Category).filter_by(course_id=course_dto.id).delete()
                 _course.categories = course_dto.categories
-            if course_dto.video:
-                _course.video = course_dto.video
+            if course_dto.presentation_video:
+                _course.presentation_video = course_dto.presentation_video
             if course_dto.image:
                 _course.image = course_dto.image
         except:
@@ -99,6 +103,24 @@ class CourseRepositoryImpl(CourseRepository):
                 i.deactivate()
         except:
             raise
+
+    def add_content(
+        self, data: ContentCreateModel, course_id: str
+    ) -> Optional[ContentReadModel]:
+        try:
+            uuid = shortuuid.uuid()
+            course = self.session.query(CourseDTO).filter_by(id=course_id).first()
+            if course.has_content_with_chapter(data.chapter):
+                raise ChapterAlreadyInCourseError
+            content = Content.from_create_model(
+                id=uuid, content=data, course_id=course_id
+            )
+            course.content.append(content)
+        except NoResultFound:
+            raise CourseNotFoundError
+        except:
+            raise
+        return content.to_read_model()
 
 
 class CourseCommandUseCaseUnitOfWorkImpl(CourseCommandUseCaseUnitOfWork):
