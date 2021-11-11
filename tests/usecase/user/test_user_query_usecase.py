@@ -2,10 +2,7 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 
-from app.domain.user.user_exception import (
-    NoColabsInCourseError,
-    NoStudentsInCourseError,
-)
+from app.domain.user.user_exception import NoStudentsInCourseError, NoColabsInCourseError
 from app.infrastructure.course import CourseDTO, CourseQueryServiceImpl
 from app.usecase.user.user_query_usecase import UserQueryUseCaseImpl
 from tests.parameters import course_dto_no_colabs, course_dto_no_students
@@ -14,7 +11,7 @@ from tests.parameters import course_dto_no_colabs, course_dto_no_students
 class TestUserQueryUseCase:
     def test_fetch_students_by_id_should_throw_no_students_in_course_error(self):
         session = MagicMock()
-        session.query(CourseDTO).filter_by().one = Mock(
+        session.query(CourseDTO).filter_by().first = Mock(
             return_value=course_dto_no_students
         )
         course_query_service = CourseQueryServiceImpl(session)
@@ -25,7 +22,7 @@ class TestUserQueryUseCase:
 
     def test_fetch_colabs_by_id_should_throw_no_colabs_in_course_error(self):
         session = MagicMock()
-        session.query(CourseDTO).filter_by().one = Mock(
+        session.query(CourseDTO).filter_by().first = Mock(
             return_value=course_dto_no_colabs
         )
         course_query_service = CourseQueryServiceImpl(session)
