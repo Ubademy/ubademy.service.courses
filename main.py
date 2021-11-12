@@ -385,7 +385,7 @@ async def deactivate_user(
     query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
-        if user_id is not uid:
+        if user_id != uid:
             check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
         course_command_usecase.deactivate_user_from_course(user_id, id)
     except CourseNotFoundError as e:
