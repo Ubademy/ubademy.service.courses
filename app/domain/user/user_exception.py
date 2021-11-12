@@ -24,3 +24,17 @@ class UserAlreadyInCourseError(Exception):
 
     def __str__(self):
         return UserAlreadyInCourseError.message
+
+
+class MissingUserIdError(Exception):
+    message = "Missing user id in query params."
+
+    def __str__(self):
+        return MissingUserIdError.message
+
+
+class UserIsNotCreatorError(Exception):
+    message = "User is not the creator of the course you specified."
+
+    def __str__(self):
+        return UserIsNotCreatorError.message
