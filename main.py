@@ -175,6 +175,9 @@ async def get_courses_filtering(
 ):
 
     try:
+        if not free and not paid:
+            free = not free
+            paid = not paid
         courses = course_query_usecase.fetch_courses_by_filters(
             name=name,
             creator_id=creator_id,
