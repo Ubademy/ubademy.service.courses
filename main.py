@@ -26,6 +26,7 @@ from app.domain.user.user_exception import (
     NoStudentsInCourseError,
     NoUsersInCourseError,
     UserAlreadyInCourseError,
+    UserIsNotCreatorError,
 )
 from app.infrastructure.course import (
     CourseCommandUseCaseUnitOfWorkImpl,
@@ -229,6 +230,87 @@ async def get_course(
     return course
 
 
+def check_user_creator_permission(cid: str, uid: str, query: CourseQueryUseCase):
+    if not query.user_is_creator(course_id=cid, user_id=uid):
+        raise UserIsNotCreatorError
+
+
+@app.patch(
+    "/courses/{id}",
+    response_model=CourseReadModel,
+    status_code=status.HTTP_202_ACCEPTED,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+    },
+    tags=["courses"],
+)
+async def update_course(
+    id: str,
+    uid: str,
+    data: CourseUpdateModel,
+    course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
+):
+    try:
+        check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
+        updated_course = course_command_usecase.update_course(id, data)
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except UserIsNotCreatorError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return updated_course
+
+
+@app.delete(
+    "/courses/{id}",
+    status_code=status.HTTP_202_ACCEPTED,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+    },
+    tags=["courses"],
+)
+async def delete_course(
+    id: str,
+    uid: str,
+    course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
+):
+    try:
+        check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
+        course_command_usecase.delete_course_by_id(id)
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except UserIsNotCreatorError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
 @app.post(
     "/courses/{id}",
     response_model=MiniUserReadModel,
@@ -246,9 +328,14 @@ async def get_course(
 async def add_user(
     data: UserCreateModel,
     id: str,
+    uid: str,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
+        if data.role == "colab" or data.id != uid:
+            check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
+
         user = course_command_usecase.add_user(data=data, course_id=id)
     except UserAlreadyInCourseError as e:
         raise HTTPException(
@@ -258,6 +345,12 @@ async def add_user(
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+
+    except UserIsNotCreatorError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=e.message,
         )
     except Exception as e:
@@ -282,13 +375,23 @@ async def add_user(
 async def deactivate_user(
     id: str,
     user_id: str,
+    uid: str,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
+        if user_id is not uid:
+            check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
         course_command_usecase.deactivate_user_from_course(user_id, id)
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+
+    except UserIsNotCreatorError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=e.message,
         )
     except Exception as e:
@@ -400,66 +503,6 @@ async def get_course_colabs(
     return json.loads(server_response.text)
 
 
-@app.patch(
-    "/courses/{id}",
-    response_model=CourseReadModel,
-    status_code=status.HTTP_202_ACCEPTED,
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "model": ErrorMessageCourseNotFound,
-        },
-    },
-    tags=["courses"],
-)
-async def update_course(
-    id: str,
-    data: CourseUpdateModel,
-    course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
-):
-    try:
-        updated_course = course_command_usecase.update_course(id, data)
-    except CourseNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
-    except Exception as e:
-        logger.error(e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-    return updated_course
-
-
-@app.delete(
-    "/courses/{id}",
-    status_code=status.HTTP_202_ACCEPTED,
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "model": ErrorMessageCourseNotFound,
-        },
-    },
-    tags=["courses"],
-)
-async def delete_course(
-    id: str,
-    course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
-):
-    try:
-        course_command_usecase.delete_course_by_id(id)
-    except CourseNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
-    except Exception as e:
-        logger.error(e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-
 @app.get(
     "/courses/categories/",
     response_model=List[str],
@@ -501,9 +544,12 @@ async def get_categories(
 async def add_content(
     data: ContentCreateModel,
     id: str,
+    uid: str,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
+        check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
         content = course_command_usecase.add_content(data=data, course_id=id)
     except CourseNotFoundError as e:
         raise HTTPException(
@@ -515,6 +561,12 @@ async def add_content(
             status_code=status.HTTP_409_CONFLICT,
             detail=e.message,
         )
+
+    except UserIsNotCreatorError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
     except Exception as e:
         logger.error(e)
         raise HTTPException(
@@ -522,6 +574,11 @@ async def add_content(
         )
 
     return content
+
+
+def check_user_involved_in_course(cid: str, uid: str, command: CourseCommandUseCase):
+    if not command.user_involved(course_id=cid, user_id=uid):
+        raise UserIsNotCreatorError
 
 
 @app.get(
@@ -537,17 +594,24 @@ async def add_content(
 )
 async def get_content(
     id: str,
-    course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
+    uid: str,
+    command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
-        content = course_query_usecase.fetch_content_by_id(id)
+        check_user_involved_in_course(cid=id, uid=uid, command=command_usecase)  # type: ignore
+        content = query_usecase.fetch_content_by_id(id)
 
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=e.message,
         )
-
+    except UserIsNotCreatorError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
     except Exception as e:
         logger.error(e)
         raise HTTPException(
@@ -575,9 +639,12 @@ async def update_content(
     id: str,
     content_id: str,
     data: ContentUpdateModel,
+    uid: str,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
+        check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
         updated_content = course_command_usecase.update_content(
             course_id=id, data=data, content_id=content_id
         )
@@ -594,6 +661,12 @@ async def update_content(
     except ChapterAlreadyInCourseError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
+            detail=e.message,
+        )
+
+    except UserIsNotCreatorError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=e.message,
         )
     except Exception as e:
