@@ -72,6 +72,10 @@ class CourseCommandUseCase(ABC):
     ) -> Optional[ContentReadModel]:
         raise NotImplementedError
 
+    @abstractmethod
+    def user_involved(self, course_id: str, user_id: str) -> bool:
+        raise NotImplementedError
+
 
 class CourseCommandUseCaseImpl(CourseCommandUseCase):
     def __init__(
@@ -214,3 +218,8 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
             raise
 
         return updated_content
+
+    def user_involved(self, course_id: str, user_id: str) -> bool:
+        return self.uow.course_repository.user_involved(
+            course_id=course_id, user_id=user_id
+        )
