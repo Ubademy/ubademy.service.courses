@@ -53,3 +53,7 @@ class CourseRepository(ABC):
         self, course_id: str, data: ContentUpdateModel, content_id: str
     ) -> Optional[ContentReadModel]:
         raise NotImplementedError
+
+    @abstractmethod
+    def user_involved(self, course_id: str, user_id: str) -> bool:
+        raise NotImplementedError
