@@ -19,40 +19,55 @@ Directory structure (based on [Onion Architecture](https://jeffreypalermo.com/20
 ├── main.py
 ├── app
 │   ├── domain
+│   │   ├── content
+│   │   │   └── content_exception.py
 │   │   ├── course
-│   │   │   ├── course.py  # Entity
-│   │   │   ├── course_exception.py  # Exception definitions
-│   │   │   └── course_repository.py  # Repository interface
+│   │   │   ├── course.py
+│   │   │   ├── course_exception.py
+│   │   │   └── course_repository.py
 │   │   └── user
-│   │       └── course_exception.py  # Exception definitions
+│   │       └── user_exception.py
 │   ├── infrastructure
 │   │   ├── course
-│   │   │   ├── course_dto.py  # DTO using SQLAlchemy
-│   │   │   ├── course_query_service.py  # Query service implementation
-│   │   │   └── course_repository.py  # Repository implementation
+│   │   │   ├── course_dto.py               # DTO using SQLAlchemy
+│   │   │   ├── course_query_service.py     # Query service implementation
+│   │   │   └── course_repository.py        # Repository implementation
 │   │   └── database.py
 │   ├── presentation
 │   │   └── schema
-│   │       └── course
-│   │           └── course_error_message.py
+│   │       ├── content
+│   │       │   └── content_error_message.py
+│   │       ├── course
+│   │       │   └── course_error_message.py
+│   │       └── user
+│   │           └── user_error_message.py
 │   └── usecase
+│       ├── content
+│       │   ├── content_command_model.py    # Write and Update models
+│       │   └── course_query_model.py       # Read model
 │       ├── course
-│       │   ├── course_command_model.py  # Write models including schemas of the RESTFul API
+│       │   ├── course_command_model.py     # Write and Update models
 │       │   ├── course_command_usecase.py
-│       │   ├── course_query_model.py  # Read models including schemas
-│       │   ├── course_query_service.py  # Query service interface
+│       │   ├── course_query_model.py       # Read model
+│       │   ├── course_query_service.py     # Query service interface
 │       │   └── course_query_usecase.py
 │       └── user
-│           ├── user_query_model.py  # Read models including schemas
+│           ├── user_command_model.py       # Write and Update models
+|           ├── user_query_model.py         # Read model
 │           └── user_query_usecase.py
 └── tests
 ```
 
+## Build
+``` bash
+docker-compose build    # Build app
+
+make build              # Destroys DB and then builds
+```
+
 ## Run
 ``` bash
-docker-compose build
-
-docker-compose up
+make run
 ```
 
 Access api swagger at: http://127.0.0.1:8000/docs#/
