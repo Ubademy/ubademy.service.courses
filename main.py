@@ -333,7 +333,9 @@ async def add_user(
     query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
-        check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
+        if data.role == "colab" or data.id != uid:
+            check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
+
         user = course_command_usecase.add_user(data=data, course_id=id)
     except UserAlreadyInCourseError as e:
         raise HTTPException(
