@@ -159,6 +159,12 @@ class CourseRepositoryImpl(CourseRepository):
 
         return _cont.to_read_model()
 
+    def user_involved(self, course_id: str, user_id: str) -> bool:
+        course = self.session.query(CourseDTO).filter_by(id=course_id).first()
+        if course is None:
+            raise CourseNotFoundError
+        return course.has_active_user_with_id(user_id) or course.creator_id == user_id
+
 
 class CourseCommandUseCaseUnitOfWorkImpl(CourseCommandUseCaseUnitOfWork):
     def __init__(

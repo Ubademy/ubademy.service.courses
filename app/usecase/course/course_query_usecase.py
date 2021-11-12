@@ -39,6 +39,10 @@ class CourseQueryUseCase(ABC):
     def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
         raise NotImplementedError
 
+    @abstractmethod
+    def user_is_creator(self, course_id: str, user_id: str) -> bool:
+        raise NotImplementedError
+
 
 class CourseQueryUseCaseImpl(CourseQueryUseCase):
     def __init__(self, course_query_service: CourseQueryService):
@@ -104,3 +108,7 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
             raise
 
         return content
+
+    def user_is_creator(self, course_id: str, user_id: str) -> bool:
+        course = self.fetch_course_by_id(course_id)
+        return course is not None and course.creator_id == user_id

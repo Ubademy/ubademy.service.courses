@@ -26,6 +26,8 @@ def get_categories(categories):
 
 def create_categories(id, categories):
     v = []
+    if categories is None:
+        return v
     for i in categories:
         v.append(Category(id=shortuuid.uuid(), course_id=id, category=i))
     return v

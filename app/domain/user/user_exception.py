@@ -24,3 +24,10 @@ class UserAlreadyInCourseError(Exception):
 
     def __str__(self):
         return UserAlreadyInCourseError.message
+
+
+class UserIsNotCreatorError(Exception):
+    message = "User is not the creator of the course you specified."
+
+    def __str__(self):
+        return UserIsNotCreatorError.message
