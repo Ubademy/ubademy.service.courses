@@ -14,7 +14,7 @@ class CourseQueryUseCase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def fetch_courses(self) -> List[CourseReadModel]:
+    def fetch_courses(self, limit: int = 100, offset: int = 0) -> List[CourseReadModel]:
         raise NotImplementedError
 
     @abstractmethod
@@ -33,6 +33,8 @@ class CourseQueryUseCase(ABC):
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
         text: Optional[str],
+        limit: int = 100,
+        offset: int = 0,
     ) -> List[CourseReadModel]:
         raise NotImplementedError
 
@@ -59,9 +61,9 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
 
         return course
 
-    def fetch_courses(self) -> List[CourseReadModel]:
+    def fetch_courses(self, limit: int = 100, offset: int = 0) -> List[CourseReadModel]:
         try:
-            courses = self.course_query_service.find_all()
+            courses = self.course_query_service.find_all(limit=limit, offset=offset)
         except:
             raise
 
@@ -86,6 +88,8 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
         ignore_free: Optional[bool] = None,
         ignore_paid: Optional[bool] = None,
         text: Optional[str] = None,
+        limit: int = 100,
+        offset: int = 0,
     ) -> List[CourseReadModel]:
         try:
             courses = self.course_query_service.find_by_filters(
@@ -98,6 +102,8 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
                 ignore_free=ignore_free,
                 ignore_paid=ignore_paid,
                 text=text,
+                limit=limit,
+                offset=offset,
             )
         except:
             raise

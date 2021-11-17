@@ -12,7 +12,7 @@ class CourseQueryService(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def find_all(self) -> List[CourseReadModel]:
+    def find_all(self, limit: int = 100, offset: int = 0) -> List[CourseReadModel]:
         raise NotImplementedError
 
     @abstractmethod
@@ -31,6 +31,8 @@ class CourseQueryService(ABC):
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
         text: Optional[str],
+        limit: int = 100,
+        offset: int = 0,
     ) -> List[CourseReadModel]:
         raise NotImplementedError
 

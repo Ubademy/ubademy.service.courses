@@ -139,10 +139,12 @@ async def create_course(
     tags=["courses"],
 )
 async def get_courses(
+    limit: int = 100,
+    offset: int = 0,
     course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
-        courses = course_query_usecase.fetch_courses()
+        courses = course_query_usecase.fetch_courses(limit=limit, offset=offset)
 
     except Exception as e:
         logger.error(e)
@@ -172,6 +174,8 @@ async def get_courses_filtering(
     free: Optional[bool] = False,
     paid: Optional[bool] = False,
     text: Optional[str] = None,
+    limit: int = 100,
+    offset: int = 0,
     course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
 
@@ -189,6 +193,8 @@ async def get_courses_filtering(
             ignore_free=not free,
             ignore_paid=not paid,
             text=text,
+            limit=limit,
+            offset=offset,
         )
 
     except Exception as e:
