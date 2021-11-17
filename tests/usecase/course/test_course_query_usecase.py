@@ -9,7 +9,7 @@ from app.usecase.course import CourseQueryUseCaseImpl
 from tests.parameters import mock_fetch_all, mock_filter_course_1
 
 
-class TestBookQueryUseCase:
+class TestCourseQueryUseCase:
     def test_fetch_course_by_id_should_return_course(self):
         session = MagicMock()
         session.query(CourseDTO).filter_by = Mock(side_effect=mock_filter_course_1)
@@ -47,7 +47,7 @@ class TestBookQueryUseCase:
 
     def test_fetch_courses_should_return_courses(self):
         session = MagicMock()
-        session.query(CourseDTO).order_by().limit().all = Mock(
+        session.query(CourseDTO).order_by().slice().all = Mock(
             side_effect=mock_fetch_all
         )
         course_query_service = CourseQueryServiceImpl(session)
@@ -61,7 +61,7 @@ class TestBookQueryUseCase:
 
     def test_fetch_courses_should_throw_courses_not_found_error(self):
         session = MagicMock()
-        session.query(CourseDTO).order_by().limit().all = Mock(
+        session.query(CourseDTO).order_by().slice().all = Mock(
             side_effect=CoursesNotFoundError
         )
         course_query_service = CourseQueryServiceImpl(session)
@@ -72,7 +72,7 @@ class TestBookQueryUseCase:
 
     def test_fetch_courses_by_filters_with_no_filters_should_return_all(self):
         session = MagicMock()
-        session.query(CourseDTO).all = Mock(side_effect=mock_fetch_all)
+        session.query(CourseDTO).slice().all = Mock(side_effect=mock_fetch_all)
         course_query_service = CourseQueryServiceImpl(session)
         course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
 

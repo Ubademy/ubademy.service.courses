@@ -26,12 +26,12 @@ class CourseQueryServiceImpl(CourseQueryService):
 
         return course_dto.to_read_model()
 
-    def find_all(self) -> List[CourseReadModel]:
+    def find_all(self, limit: int = 100, offset: int = 0) -> List[CourseReadModel]:
         try:
             course_dtos = (
                 self.session.query(CourseDTO)
                 .order_by(CourseDTO.updated_at)
-                .limit(100)
+                .slice(limit * offset, limit * (offset + 1))
                 .all()
             )
         except:
@@ -58,6 +58,8 @@ class CourseQueryServiceImpl(CourseQueryService):
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
         text: Optional[str],
+        limit: int = 100,
+        offset: int = 0,
     ) -> List[CourseReadModel]:
         try:
             courses_q = self.session.query(CourseDTO)
@@ -90,7 +92,7 @@ class CourseQueryServiceImpl(CourseQueryService):
                     | (CourseDTO.description.ilike(text))  # type: ignore
                 )
 
-            course_dtos = courses_q.all()
+            course_dtos = courses_q.slice(limit * offset, limit * (offset + 1)).all()
         except:
             raise
 
