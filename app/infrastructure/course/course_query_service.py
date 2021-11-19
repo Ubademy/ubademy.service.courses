@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
@@ -26,7 +26,9 @@ class CourseQueryServiceImpl(CourseQueryService):
 
         return course_dto.to_read_model()
 
-    def find_all(self, limit: int = 100, offset: int = 0) -> List[CourseReadModel]:
+    def find_all(
+        self, limit: int = 100, offset: int = 0
+    ) -> Tuple[List[CourseReadModel], int]:
         try:
             course_dtos = (
                 self.session.query(CourseDTO)
@@ -37,7 +39,10 @@ class CourseQueryServiceImpl(CourseQueryService):
         except:
             raise
 
-        return list(map(lambda course_dto: course_dto.to_read_model(), course_dtos))
+        return (
+            list(map(lambda course_dto: course_dto.to_read_model(), course_dtos)),
+            self.session.query(CourseDTO).count(),
+        )
 
     def find_all_categories(self) -> List[str]:
         try:
@@ -49,6 +54,7 @@ class CourseQueryServiceImpl(CourseQueryService):
 
     def find_by_filters(
         self,
+        ids: Optional[List[str]],
         name: Optional[str],
         creator_id: Optional[str],
         colab_id: Optional[str],
@@ -60,9 +66,11 @@ class CourseQueryServiceImpl(CourseQueryService):
         text: Optional[str],
         limit: int = 100,
         offset: int = 0,
-    ) -> List[CourseReadModel]:
+    ) -> Tuple[List[CourseReadModel], int]:
         try:
             courses_q = self.session.query(CourseDTO)
+            if ids:
+                courses_q = courses_q.filter(CourseDTO.id.in_(ids))  # type: ignore
             if name:
                 courses_q = courses_q.filter_by(name=name)
             if creator_id:
@@ -96,7 +104,10 @@ class CourseQueryServiceImpl(CourseQueryService):
         except:
             raise
 
-        return list(map(lambda course_dto: course_dto.to_read_model(), course_dtos))
+        return (
+            list(map(lambda course_dto: course_dto.to_read_model(), course_dtos)),
+            courses_q.count(),
+        )
 
     def find_users_by_id(self, id: str) -> List[MiniUserReadModel]:
         try:
@@ -122,6 +133,3 @@ class CourseQueryServiceImpl(CourseQueryService):
             raise
 
         return list(map(lambda c: c.to_read_model(), content))
-
-    def courses_count(self) -> int:
-        return self.session.query(CourseDTO).count()
