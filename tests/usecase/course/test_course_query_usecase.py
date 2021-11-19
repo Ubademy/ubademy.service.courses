@@ -16,10 +16,10 @@ class TestCourseQueryUseCase:
         course_query_service = CourseQueryServiceImpl(session)
         course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
 
-        book = course_query_usecase.fetch_course_by_id("course_1")
+        course = course_query_usecase.fetch_course_by_id("course_1")
 
         session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
-        assert book.name == "C Programming For Beginners - Master the C Language"
+        assert course.name == "C Programming For Beginners - Master the C Language"
 
     def test_fetch_course_by_id_should_throw_course_not_found_error(self):
         session = MagicMock()
@@ -53,7 +53,7 @@ class TestCourseQueryUseCase:
         course_query_service = CourseQueryServiceImpl(session)
         course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
 
-        courses = course_query_usecase.fetch_courses()
+        courses, count = course_query_usecase.fetch_courses()
 
         assert len(courses) == 2
         assert courses[0].price == 10
@@ -76,7 +76,7 @@ class TestCourseQueryUseCase:
         course_query_service = CourseQueryServiceImpl(session)
         course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
 
-        courses = course_query_usecase.fetch_courses_by_filters()
+        courses, count = course_query_usecase.fetch_courses_by_filters()
 
         assert len(courses) == 2
         assert courses[0].price == 10
