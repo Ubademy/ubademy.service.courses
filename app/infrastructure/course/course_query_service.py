@@ -122,3 +122,6 @@ class CourseQueryServiceImpl(CourseQueryService):
             raise
 
         return list(map(lambda c: c.to_read_model(), content))
+
+    def courses_count(self) -> int:
+        return self.session.query(CourseDTO).count()

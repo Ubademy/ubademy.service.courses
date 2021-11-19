@@ -41,3 +41,8 @@ class CourseReadModel(BaseModel):
             created_at=cast(int, course.created_at),
             updated_at=cast(int, course.updated_at),
         )
+
+
+class PaginatedCourseReadModel(BaseModel):
+    courses: List[CourseReadModel] = Field(example=CourseReadModel.schema())
+    count: int = Field(ge=0, example=1)

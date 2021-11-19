@@ -60,6 +60,7 @@ from app.usecase.course import (
     CourseReadModel,
     CourseUpdateModel,
 )
+from app.usecase.course.course_query_model import PaginatedCourseReadModel
 from app.usecase.user.user_command_model import UserCreateModel
 from app.usecase.user.user_query_model import MiniUserReadModel, UserReadModel
 from app.usecase.user.user_query_usecase import UserQueryUseCase, UserQueryUseCaseImpl
@@ -134,17 +135,18 @@ async def create_course(
 
 @app.get(
     "/courses",
-    response_model=List[CourseReadModel],
+    response_model=PaginatedCourseReadModel,
     status_code=status.HTTP_200_OK,
     tags=["courses"],
 )
 async def get_courses(
-    limit: int = 100,
+    limit: int = 50,
     offset: int = 0,
     course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
         courses = course_query_usecase.fetch_courses(limit=limit, offset=offset)
+        count = course_query_usecase.courses_count()
 
     except Exception as e:
         logger.error(e)
@@ -155,12 +157,12 @@ async def get_courses(
     if len(courses) == 0:
         logger.info(CoursesNotFoundError.message)
 
-    return courses
+    return PaginatedCourseReadModel(courses=courses, count=count)
 
 
 @app.get(
     "/courses/",
-    response_model=List[CourseReadModel],
+    response_model=PaginatedCourseReadModel,
     status_code=status.HTTP_200_OK,
     tags=["courses"],
 )
@@ -174,7 +176,7 @@ async def get_courses_filtering(
     free: Optional[bool] = False,
     paid: Optional[bool] = False,
     text: Optional[str] = None,
-    limit: int = 100,
+    limit: int = 50,
     offset: int = 0,
     course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
@@ -196,6 +198,7 @@ async def get_courses_filtering(
             limit=limit,
             offset=offset,
         )
+        count = course_query_usecase.courses_count()
 
     except Exception as e:
         logger.error(e)
@@ -206,7 +209,7 @@ async def get_courses_filtering(
     if courses is None or len(courses) == 0:
         logger.info(CoursesNotFoundError.message)
 
-    return courses
+    return PaginatedCourseReadModel(courses=courses, count=count)
 
 
 @app.get(
@@ -413,7 +416,8 @@ async def deactivate_user(
 
 
 try:
-    microservices = ast.literal_eval(os.environ["MICROSERVICES"])
+    microservices = os.environ["MICROSERVICES"]
+    microservices = ast.literal_eval(microservices)
 except KeyError as e:
     microservices = {}
 
@@ -426,7 +430,7 @@ def get_users(uids, request):
             ids = ids + i + ","
         logger.info(uids)
         return requests.get(
-            microservices.get("users") + "users/filter",
+            microservices.get("users") + "users",
             headers=h,
             params={"ids": ids[:-1]},
         )
@@ -493,6 +497,7 @@ async def get_course_colabs(
     try:
         colabs = user_query_usecase.fetch_colabs_by_id(id)
         server_response = get_users(colabs, request)
+        logger.info(server_response)
 
     except CourseNotFoundError as e:
         raise HTTPException(

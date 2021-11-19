@@ -43,3 +43,7 @@ class CourseQueryService(ABC):
     @abstractmethod
     def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
         raise NotImplementedError
+
+    @abstractmethod
+    def courses_count(self) -> int:
+        raise NotImplementedError

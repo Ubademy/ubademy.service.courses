@@ -46,6 +46,10 @@ class CourseQueryUseCase(ABC):
     def user_is_creator(self, course_id: str, user_id: str) -> bool:
         raise NotImplementedError
 
+    @abstractmethod
+    def courses_count(self) -> int:
+        raise NotImplementedError
+
 
 class CourseQueryUseCaseImpl(CourseQueryUseCase):
     def __init__(self, course_query_service: CourseQueryService):
@@ -121,3 +125,6 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
     def user_is_creator(self, course_id: str, user_id: str) -> bool:
         course = self.fetch_course_by_id(course_id)
         return course is not None and course.creator_id == user_id
+
+    def courses_count(self) -> int:
+        return self.course_query_service.courses_count()
