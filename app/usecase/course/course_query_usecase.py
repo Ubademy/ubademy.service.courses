@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from app.domain.course import CourseNotFoundError
 
@@ -14,7 +14,9 @@ class CourseQueryUseCase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def fetch_courses(self, limit: int = 100, offset: int = 0) -> List[CourseReadModel]:
+    def fetch_courses(
+        self, limit: int = 100, offset: int = 0
+    ) -> Tuple[List[CourseReadModel], int]:
         raise NotImplementedError
 
     @abstractmethod
@@ -24,6 +26,7 @@ class CourseQueryUseCase(ABC):
     @abstractmethod
     def fetch_courses_by_filters(
         self,
+        ids: Optional[List[str]],
         name: Optional[str],
         creator_id: Optional[str],
         colab_id: Optional[str],
@@ -35,7 +38,7 @@ class CourseQueryUseCase(ABC):
         text: Optional[str],
         limit: int = 100,
         offset: int = 0,
-    ) -> List[CourseReadModel]:
+    ) -> Tuple[List[CourseReadModel], int]:
         raise NotImplementedError
 
     @abstractmethod
@@ -44,10 +47,6 @@ class CourseQueryUseCase(ABC):
 
     @abstractmethod
     def user_is_creator(self, course_id: str, user_id: str) -> bool:
-        raise NotImplementedError
-
-    @abstractmethod
-    def courses_count(self) -> int:
         raise NotImplementedError
 
 
@@ -65,13 +64,17 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
 
         return course
 
-    def fetch_courses(self, limit: int = 100, offset: int = 0) -> List[CourseReadModel]:
+    def fetch_courses(
+        self, limit: int = 100, offset: int = 0
+    ) -> Tuple[List[CourseReadModel], int]:
         try:
-            courses = self.course_query_service.find_all(limit=limit, offset=offset)
+            courses, count = self.course_query_service.find_all(
+                limit=limit, offset=offset
+            )
         except:
             raise
 
-        return courses
+        return courses, count
 
     def fetch_categories(self) -> List[str]:
         try:
@@ -83,6 +86,7 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
 
     def fetch_courses_by_filters(
         self,
+        ids: Optional[List[str]] = None,
         name: Optional[str] = None,
         creator_id: Optional[str] = None,
         colab_id: Optional[str] = None,
@@ -94,9 +98,10 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
         text: Optional[str] = None,
         limit: int = 100,
         offset: int = 0,
-    ) -> List[CourseReadModel]:
+    ) -> Tuple[List[CourseReadModel], int]:
         try:
-            courses = self.course_query_service.find_by_filters(
+            courses, count = self.course_query_service.find_by_filters(
+                ids=ids,
                 name=name,
                 creator_id=creator_id,
                 colab_id=colab_id,
@@ -112,7 +117,7 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
         except:
             raise
 
-        return courses
+        return courses, count
 
     def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
         try:
@@ -125,6 +130,3 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
     def user_is_creator(self, course_id: str, user_id: str) -> bool:
         course = self.fetch_course_by_id(course_id)
         return course is not None and course.creator_id == user_id
-
-    def courses_count(self) -> int:
-        return self.course_query_service.courses_count()

@@ -6,7 +6,7 @@ from logging import config
 from typing import Iterator, List, Optional
 
 import requests
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, Query, status
 from sqlalchemy.orm.session import Session
 from starlette.requests import Request
 
@@ -145,8 +145,7 @@ async def get_courses(
     course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
-        courses = course_query_usecase.fetch_courses(limit=limit, offset=offset)
-        count = course_query_usecase.courses_count()
+        courses, count = course_query_usecase.fetch_courses(limit=limit, offset=offset)
 
     except Exception as e:
         logger.error(e)
@@ -167,6 +166,7 @@ async def get_courses(
     tags=["courses"],
 )
 async def get_courses_filtering(
+    ids: Optional[List[str]] = Query(None),
     name: Optional[str] = None,
     creator_id: Optional[str] = None,
     colab_id: Optional[str] = None,
@@ -185,7 +185,8 @@ async def get_courses_filtering(
         if not free and not paid:
             free = not free
             paid = not paid
-        courses = course_query_usecase.fetch_courses_by_filters(
+        courses, count = course_query_usecase.fetch_courses_by_filters(
+            ids=ids,
             name=name,
             creator_id=creator_id,
             colab_id=colab_id,
@@ -198,7 +199,6 @@ async def get_courses_filtering(
             limit=limit,
             offset=offset,
         )
-        count = course_query_usecase.courses_count()
 
     except Exception as e:
         logger.error(e)
@@ -361,7 +361,6 @@ async def add_user(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=e.message,
         )
-
     except UserIsNotCreatorError as e:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -419,7 +418,7 @@ try:
     microservices = os.environ["MICROSERVICES"]
     microservices = ast.literal_eval(microservices)
 except KeyError as e:
-    microservices = {}
+    microservices = {}  # type: ignore
 
 
 def get_users(uids, request):
