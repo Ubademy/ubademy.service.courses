@@ -62,7 +62,7 @@ from app.usecase.course import (
 )
 from app.usecase.course.course_query_model import PaginatedCourseReadModel
 from app.usecase.user.user_command_model import UserCreateModel
-from app.usecase.user.user_query_model import MiniUserReadModel, UserReadModel
+from app.usecase.user.user_query_model import MiniUserReadModel, PaginatedUserReadModel
 from app.usecase.user.user_query_usecase import UserQueryUseCase, UserQueryUseCaseImpl
 
 config.fileConfig("logging.conf", disable_existing_loggers=False)
@@ -429,7 +429,7 @@ def get_users(uids, request, limit, offset):
             ids = ids + i + ","
         logger.info(uids)
         return requests.get(
-            microservices.get("users") + "users",
+            microservices.get("users") + "users/filter-by-ids",
             headers=h,
             params={"ids": ids[:-1], "limit": limit, "offset": offset},
         )
@@ -439,7 +439,7 @@ def get_users(uids, request, limit, offset):
 
 @app.get(
     "/courses/{id}/students",
-    response_model=List[UserReadModel],
+    response_model=PaginatedUserReadModel,
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_404_NOT_FOUND: {
@@ -481,7 +481,7 @@ async def get_course_students(
 
 @app.get(
     "/courses/{id}/colabs",
-    response_model=List[UserReadModel],
+    response_model=PaginatedUserReadModel,
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_404_NOT_FOUND: {
