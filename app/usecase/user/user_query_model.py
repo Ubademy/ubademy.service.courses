@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel, Field
 
 
@@ -35,3 +37,8 @@ class MiniUserReadModel(BaseModel):
 
     def get_id(self):
         return self.id
+
+
+class PaginatedUserReadModel(BaseModel):
+    users: List[UserReadModel] = Field(example=UserReadModel.schema())
+    count: int = Field(ge=0, example=1)
