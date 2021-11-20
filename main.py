@@ -421,7 +421,7 @@ except KeyError as e:
     microservices = {}  # type: ignore
 
 
-def get_users(uids, request):
+def get_users(uids, request, limit, offset):
     try:
         h = {"authorization": request.headers.get("authorization")}
         ids = ""
@@ -431,7 +431,7 @@ def get_users(uids, request):
         return requests.get(
             microservices.get("users") + "users",
             headers=h,
-            params={"ids": ids[:-1]},
+            params={"ids": ids[:-1], "limit": limit, "offset": offset},
         )
     except:
         raise
@@ -451,11 +451,13 @@ def get_users(uids, request):
 async def get_course_students(
     id: str,
     request: Request,
+    limit: int = 50,
+    offset: int = 0,
     user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
 ):
     try:
         students = user_query_usecase.fetch_students_by_id(id)
-        server_response = get_users(students, request)
+        server_response = get_users(students, request, limit, offset)
 
     except CourseNotFoundError as e:
         raise HTTPException(
@@ -491,11 +493,13 @@ async def get_course_students(
 async def get_course_colabs(
     id: str,
     request: Request,
+    limit: int = 50,
+    offset: int = 0,
     user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
 ):
     try:
         colabs = user_query_usecase.fetch_colabs_by_id(id)
-        server_response = get_users(colabs, request)
+        server_response = get_users(colabs, request, limit, offset)
         logger.info(server_response)
 
     except CourseNotFoundError as e:
