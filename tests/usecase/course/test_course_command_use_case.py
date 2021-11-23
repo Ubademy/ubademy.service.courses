@@ -85,7 +85,7 @@ class TestCourseCommandUseCase:
 
         session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
 
-    def test_add_user_should_return_user(self):
+    def test_add_collab_should_return_collab(self):
         session = MagicMock()
         session.query(CourseDTO).filter_by = Mock(side_effect=mock_filter_course_1)
         course_repository = CourseRepositoryImpl(session)
@@ -94,12 +94,12 @@ class TestCourseCommandUseCase:
         )
         course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
 
-        user = course_command_usecase.add_user(user_1, user_1.course_id)
+        user = course_command_usecase.add_collab(user_1.course_id, user_1.id)
 
         session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
         assert user.id is user_1.id
 
-    def test_deactivate_user_from_course_should_deactivate_user(self):
+    def test_deactivate_collab_from_course_should_deactivate_collab(self):
         session = MagicMock()
         session.query(CourseDTO).filter_by = Mock(
             side_effect=mock_filter_course_1_with_user
@@ -110,7 +110,7 @@ class TestCourseCommandUseCase:
         )
         course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
 
-        course_command_usecase.deactivate_user_from_course(
+        course_command_usecase.deactivate_collab_from_course(
             user_id="user_1", course_id="course_1"
         )
 

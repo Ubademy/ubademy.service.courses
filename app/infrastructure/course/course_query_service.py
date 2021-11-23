@@ -3,9 +3,9 @@ from typing import List, Optional, Tuple
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 
-from app.domain.user.user_exception import NoUsersInCourseError
+from app.domain.collab.collab_exception import NoCollabsInCourseError
+from app.usecase.collab.collab_query_model import CollabReadModel
 from app.usecase.course import CourseQueryService, CourseReadModel
-from app.usecase.user.user_query_model import MiniUserReadModel
 
 from ...domain.course import CourseNotFoundError
 from ...usecase.content.content_query_model import ContentReadModel
@@ -109,18 +109,18 @@ class CourseQueryServiceImpl(CourseQueryService):
             courses_q.count(),
         )
 
-    def find_users_by_id(self, id: str) -> List[MiniUserReadModel]:
+    def find_collabs_by_id(self, id: str) -> List[CollabReadModel]:
         try:
             course = self.session.query(CourseDTO).filter_by(id=id).first()
             if not course:
                 raise CourseNotFoundError
-            users = list(filter(lambda user: user.active, course.users))
-            if len(users) == 0:
-                raise NoUsersInCourseError
+            collabs = list(filter(lambda c: c.active, course.collabs))
+            if len(collabs) == 0:
+                raise NoCollabsInCourseError
         except:
             raise
 
-        return list(map(lambda user: user.to_read_model(), users))
+        return list(map(lambda collab: collab.to_read_model(), collabs))
 
     def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
         try:

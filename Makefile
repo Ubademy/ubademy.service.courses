@@ -27,7 +27,7 @@ lint:
 	$(PYLINT) main.py ./${PACKAGE}
 
 build:
-	$ docker rm db
+	$ docker rm dbcourses
 	$ docker-compose build
 
 run:
