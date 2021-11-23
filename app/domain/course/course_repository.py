@@ -2,13 +2,12 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from app.domain.course import Course
+from app.usecase.collab.collab_query_model import CollabReadModel
 from app.usecase.content.content_command_model import (
     ContentCreateModel,
     ContentUpdateModel,
 )
 from app.usecase.content.content_query_model import ContentReadModel
-from app.usecase.user.user_command_model import UserCreateModel
-from app.usecase.user.user_query_model import MiniUserReadModel
 
 
 class CourseRepository(ABC):
@@ -33,13 +32,11 @@ class CourseRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def add_user(
-        self, data: UserCreateModel, course_id: str
-    ) -> Optional[MiniUserReadModel]:
+    def add_collab(self, course_id: str, user_id: str) -> Optional[CollabReadModel]:
         raise NotImplementedError
 
     @abstractmethod
-    def deactivate_user_from_course(self, user_id, course_id):
+    def deactivate_collab_from_course(self, user_id, course_id):
         raise NotImplementedError
 
     @abstractmethod

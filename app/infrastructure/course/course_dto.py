@@ -7,10 +7,10 @@ from sqlalchemy.orm import relationship
 
 from app.domain.course import Course
 from app.infrastructure.database import Base
+from app.usecase.collab.collab_query_model import CollabReadModel
 from app.usecase.content.content_command_model import ContentCreateModel
 from app.usecase.content.content_query_model import ContentReadModel
 from app.usecase.course import CourseReadModel
-from app.usecase.user.user_query_model import MiniUserReadModel
 
 
 def unixtimestamp() -> int:
@@ -50,7 +50,7 @@ class CourseDTO(Base):
     updated_at: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
 
     categories = relationship("Category", cascade="all, delete")
-    users = relationship("User", cascade="all, delete")
+    collabs = relationship("Collab", cascade="all, delete")
     content = relationship("Content", cascade="all, delete")
 
     def to_entity(self) -> Course:
@@ -83,14 +83,9 @@ class CourseDTO(Base):
             updated_at=self.updated_at,
         )
 
-    def has_active_user_with_id(self, id: str):
+    def has_active_collab_with_id(self, id: str):
         return (
-            len(
-                list(
-                    filter(lambda user: user.active and user.user_id == id, self.users)
-                )
-            )
-            > 0
+            len(list(filter(lambda c: c.active and c.user_id == id, self.collabs))) > 0
         )
 
     def has_content_with_chapter(self, chapter: int):
@@ -132,35 +127,32 @@ class Category(Base):
     category: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
 
 
-class User(Base):
+class Collab(Base):
 
-    __tablename__ = "users"
+    __tablename__ = "collabs"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
     user_id: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     course_id: Union[str, Column] = Column(
         String, ForeignKey("courses.id"), autoincrement=False
     )
-    role: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     active: Union[bool, Column] = Column(Boolean, nullable=False, autoincrement=False)
 
-    def to_read_model(self) -> MiniUserReadModel:
-        return MiniUserReadModel(
+    def to_read_model(self) -> CollabReadModel:
+        return CollabReadModel(
             id=self.user_id,
             course_id=self.course_id,
-            role=self.role,
         )
 
     def deactivate(self):
         self.active = False
 
     @staticmethod
-    def from_read_model(user: MiniUserReadModel) -> "User":
-        return User(
+    def from_read_model(user: CollabReadModel) -> "Collab":
+        return Collab(
             id=shortuuid.uuid(),
             user_id=user.id,
             course_id=user.course_id,
-            role=user.role,
-            active=True,
+            active=user.active,
         )
 
 
