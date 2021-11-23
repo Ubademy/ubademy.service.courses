@@ -20,20 +20,14 @@ class UserReadModel(BaseModel):
         orm_mode = True
 
 
-class MiniUserReadModel(BaseModel):
+class CollabReadModel(BaseModel):
 
     id: str = Field(example="user_0")
     course_id: str = Field(example="course_0")
-    role: str = Field(example="student")
+    active: bool = Field(example=True)
 
     class Config:
         orm_mode = True
-
-    def is_student(self):
-        return self.role == "student"
-
-    def is_colab(self):
-        return self.role == "colab"
 
     def get_id(self):
         return self.id

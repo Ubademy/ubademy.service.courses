@@ -4,10 +4,10 @@ import shortuuid
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 
+from app.domain.collab.collab_exception import UserAlreadyInCourseError
 from app.domain.course import Course, CourseNotFoundError, CourseRepository
-from app.domain.user.user_exception import UserAlreadyInCourseError
+from app.usecase.collab.collab_query_model import CollabReadModel
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
-from app.usecase.user.user_query_model import MiniUserReadModel
 
 from ...domain.content.content_exception import (
     ChapterAlreadyInCourseError,
@@ -18,8 +18,7 @@ from ...usecase.content.content_command_model import (
     ContentUpdateModel,
 )
 from ...usecase.content.content_query_model import ContentReadModel
-from ...usecase.user.user_command_model import UserCreateModel
-from .course_dto import Category, Content, CourseDTO, User
+from .course_dto import Category, Collab, Content, CourseDTO
 
 
 class CourseRepositoryImpl(CourseRepository):
@@ -83,29 +82,27 @@ class CourseRepositoryImpl(CourseRepository):
         except:
             raise
 
-    def add_user(
-        self, data: UserCreateModel, course_id: str
-    ) -> Optional[MiniUserReadModel]:
+    def add_collab(self, course_id: str, user_id: str) -> Optional[CollabReadModel]:
         try:
             course = self.session.query(CourseDTO).filter_by(id=course_id).first()
-            if course.has_active_user_with_id(data.id):
+            if course.has_active_collab_with_id(user_id):
                 raise UserAlreadyInCourseError
-            user = MiniUserReadModel(id=data.id, course_id=course_id, role=data.role)
-            course.users.append(User.from_read_model(user))
+            user = CollabReadModel(id=user_id, course_id=course_id, active=True)
+            course.collabs.append(Collab.from_read_model(user))
         except NoResultFound:
             raise CourseNotFoundError
         except:
             raise
         return user
 
-    def deactivate_user_from_course(self, user_id, course_id):
+    def deactivate_collab_from_course(self, user_id, course_id):
         try:
-            users = (
-                self.session.query(User)
+            collabs = (
+                self.session.query(Collab)
                 .filter_by(user_id=user_id, course_id=course_id)
                 .all()
             )
-            for i in users:
+            for i in collabs:
                 i.deactivate()
         except:
             raise
@@ -163,7 +160,7 @@ class CourseRepositoryImpl(CourseRepository):
         course = self.session.query(CourseDTO).filter_by(id=course_id).first()
         if course is None:
             raise CourseNotFoundError
-        return course.has_active_user_with_id(user_id) or course.creator_id == user_id
+        return course.has_active_collab_with_id(user_id) or course.creator_id == user_id
 
 
 class CourseCommandUseCaseUnitOfWorkImpl(CourseCommandUseCaseUnitOfWork):

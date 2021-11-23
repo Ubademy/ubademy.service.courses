@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple
 
+from ..collab.collab_query_model import CollabReadModel
 from ..content.content_query_model import ContentReadModel
-from ..user.user_query_model import MiniUserReadModel
 from .course_query_model import CourseReadModel
 
 
@@ -40,7 +40,7 @@ class CourseQueryService(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def find_users_by_id(self, id: str) -> List[MiniUserReadModel]:
+    def find_collabs_by_id(self, id: str) -> List[CollabReadModel]:
         raise NotImplementedError
 
     @abstractmethod

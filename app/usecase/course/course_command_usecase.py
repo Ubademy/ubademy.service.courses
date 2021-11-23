@@ -10,10 +10,9 @@ from app.domain.course import (
     CourseRepository,
 )
 
+from ..collab.collab_query_model import CollabReadModel
 from ..content.content_command_model import ContentCreateModel, ContentUpdateModel
 from ..content.content_query_model import ContentReadModel
-from ..user.user_command_model import UserCreateModel
-from ..user.user_query_model import MiniUserReadModel
 from .course_command_model import CourseCreateModel, CourseUpdateModel
 from .course_query_model import CourseReadModel
 
@@ -53,13 +52,11 @@ class CourseCommandUseCase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def add_user(
-        self, data: UserCreateModel, course_id: str
-    ) -> Optional[MiniUserReadModel]:
+    def add_collab(self, course_id: str, user_id: str) -> Optional[CollabReadModel]:
         raise NotImplementedError
 
     @abstractmethod
-    def deactivate_user_from_course(self, user_id: str, course_id: str):
+    def deactivate_collab_from_course(self, user_id: str, course_id: str):
         raise NotImplementedError
 
     @abstractmethod
@@ -159,27 +156,27 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
             self.uow.rollback()
             raise
 
-    def add_user(
-        self, data: UserCreateModel, course_id: str
-    ) -> Optional[MiniUserReadModel]:
+    def add_collab(self, course_id: str, user_id: str) -> Optional[CollabReadModel]:
         try:
             course = self.uow.course_repository.find_by_id(course_id)
             if course is None:
                 raise CourseNotFoundError
-            user = self.uow.course_repository.add_user(data=data, course_id=course_id)
+            collab = self.uow.course_repository.add_collab(
+                course_id=course_id, user_id=user_id
+            )
             self.uow.commit()
         except:
             self.uow.rollback()
             raise
 
-        return user
+        return collab
 
-    def deactivate_user_from_course(self, user_id: str, course_id: str):
+    def deactivate_collab_from_course(self, user_id: str, course_id: str):
         try:
             course = self.uow.course_repository.find_by_id(course_id)
             if course is None:
                 raise CourseNotFoundError
-            self.uow.course_repository.deactivate_user_from_course(user_id, course_id)
+            self.uow.course_repository.deactivate_collab_from_course(user_id, course_id)
             self.uow.commit()
         except:
             self.uow.rollback()

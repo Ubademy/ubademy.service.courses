@@ -10,6 +10,11 @@ from fastapi import Depends, FastAPI, HTTPException, Query, status
 from sqlalchemy.orm.session import Session
 from starlette.requests import Request
 
+from app.domain.collab.collab_exception import (
+    NoCollabsInCourseError,
+    UserAlreadyInCourseError,
+    UserIsNotCreatorError,
+)
 from app.domain.content.content_exception import (
     ChapterAlreadyInCourseError,
     ContentNotFoundError,
@@ -21,19 +26,15 @@ from app.domain.course import (
     CoursesNotFoundError,
 )
 from app.domain.course.course_exception import CategoriesNotFoundError
-from app.domain.user.user_exception import (
-    NoColabsInCourseError,
-    NoStudentsInCourseError,
-    NoUsersInCourseError,
-    UserAlreadyInCourseError,
-    UserIsNotCreatorError,
-)
 from app.infrastructure.course import (
     CourseCommandUseCaseUnitOfWorkImpl,
     CourseQueryServiceImpl,
     CourseRepositoryImpl,
 )
 from app.infrastructure.database import SessionLocal, create_tables
+from app.presentation.schema.collab.collab_error_message import (
+    ErrorMessageUserAlreadyInCourse,
+)
 from app.presentation.schema.content.content_error_message import (
     ErrorMessageChapterAlreadyInCourse,
 )
@@ -41,8 +42,13 @@ from app.presentation.schema.course.course_error_message import (
     ErrorMessageCourseNameAlreadyExists,
     ErrorMessageCourseNotFound,
 )
-from app.presentation.schema.user.user_error_message import (
-    ErrorMessageUserAlreadyInCourse,
+from app.usecase.collab.collab_query_model import (
+    CollabReadModel,
+    PaginatedUserReadModel,
+)
+from app.usecase.collab.collab_query_usecase import (
+    CollabQueryUseCase,
+    CollabQueryUseCaseImpl,
 )
 from app.usecase.content.content_command_model import (
     ContentCreateModel,
@@ -61,9 +67,6 @@ from app.usecase.course import (
     CourseUpdateModel,
 )
 from app.usecase.course.course_query_model import PaginatedCourseReadModel
-from app.usecase.user.user_command_model import UserCreateModel
-from app.usecase.user.user_query_model import MiniUserReadModel, PaginatedUserReadModel
-from app.usecase.user.user_query_usecase import UserQueryUseCase, UserQueryUseCaseImpl
 
 config.fileConfig("logging.conf", disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
@@ -86,9 +89,9 @@ def course_query_usecase(session: Session = Depends(get_session)) -> CourseQuery
     return CourseQueryUseCaseImpl(course_query_service)
 
 
-def user_query_usecase(session: Session = Depends(get_session)) -> UserQueryUseCase:
+def user_query_usecase(session: Session = Depends(get_session)) -> CollabQueryUseCase:
     course_query_service: CourseQueryService = CourseQueryServiceImpl(session)
-    return UserQueryUseCaseImpl(course_query_service)
+    return CollabQueryUseCaseImpl(course_query_service)
 
 
 def course_command_usecase(
@@ -327,7 +330,7 @@ async def delete_course(
 
 @app.post(
     "/courses/{id}",
-    response_model=MiniUserReadModel,
+    response_model=CollabReadModel,
     status_code=status.HTTP_201_CREATED,
     responses={
         status.HTTP_409_CONFLICT: {
@@ -337,20 +340,18 @@ async def delete_course(
             "model": ErrorMessageCourseNotFound,
         },
     },
-    tags=["users"],
+    tags=["collabs"],
 )
-async def add_user(
-    data: UserCreateModel,
+async def add_collab(
     id: str,
     uid: str,
+    user_id: str,
     course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
     query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
     try:
-        if data.role == "colab" or data.id != uid:
-            check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
-
-        user = course_command_usecase.add_user(data=data, course_id=id)
+        check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
+        collab = course_command_usecase.add_collab(course_id=id, user_id=user_id)
     except UserAlreadyInCourseError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -372,20 +373,20 @@ async def add_user(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-    return user
+    return collab
 
 
 @app.patch(
-    "/courses/{id}/users/{user_id}",
+    "/courses/{id}/collabs/{user_id}",
     status_code=status.HTTP_202_ACCEPTED,
     responses={
         status.HTTP_404_NOT_FOUND: {
             "model": ErrorMessageCourseNotFound,
         },
     },
-    tags=["users"],
+    tags=["collabs"],
 )
-async def deactivate_user(
+async def deactivate_collab(
     id: str,
     user_id: str,
     uid: str,
@@ -395,7 +396,7 @@ async def deactivate_user(
     try:
         if user_id != uid:
             check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
-        course_command_usecase.deactivate_user_from_course(user_id, id)
+        course_command_usecase.deactivate_collab_from_course(user_id, id)
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -438,7 +439,7 @@ def get_users(uids, request, limit, offset):
 
 
 @app.get(
-    "/courses/{id}/students",
+    "/courses/{id}/collabs",
     response_model=PaginatedUserReadModel,
     status_code=status.HTTP_200_OK,
     responses={
@@ -446,73 +447,27 @@ def get_users(uids, request, limit, offset):
             "model": ErrorMessageCourseNotFound,
         },
     },
-    tags=["users"],
+    tags=["collabs"],
 )
-async def get_course_students(
+async def get_course_collabs(
     id: str,
     request: Request,
     limit: int = 50,
     offset: int = 0,
-    user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
+    user_query_usecase: CollabQueryUseCase = Depends(user_query_usecase),
 ):
     try:
-        students = user_query_usecase.fetch_students_by_id(id)
-        server_response = get_users(students, request, limit, offset)
-
-    except CourseNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e.message,
-        )
-    except NoUsersInCourseError as e:
-        logger.info(e)
-        return []
-    except NoStudentsInCourseError as e:
-        logger.info(e)
-        return []
-    except Exception as e:
-        logger.error(e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-    return json.loads(server_response.text)
-
-
-@app.get(
-    "/courses/{id}/colabs",
-    response_model=PaginatedUserReadModel,
-    status_code=status.HTTP_200_OK,
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "model": ErrorMessageCourseNotFound,
-        },
-    },
-    tags=["users"],
-)
-async def get_course_colabs(
-    id: str,
-    request: Request,
-    limit: int = 50,
-    offset: int = 0,
-    user_query_usecase: UserQueryUseCase = Depends(user_query_usecase),
-):
-    try:
-        colabs = user_query_usecase.fetch_colabs_by_id(id)
+        colabs = user_query_usecase.fetch_collabs_by_id(id)
         server_response = get_users(colabs, request, limit, offset)
         logger.info(server_response)
-
+    except NoCollabsInCourseError as e:
+        logger.info(e)
+        return []
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=e.message,
         )
-    except NoUsersInCourseError as e:
-        logger.info(e)
-        return []
-    except NoColabsInCourseError as e:
-        logger.info(e)
-        return []
     except Exception as e:
         logger.error(e)
         raise HTTPException(

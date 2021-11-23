@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   db:
-    container_name: db
+    container_name: dbcourses
     image: postgres:latest
     ports:
       - "5432:5432"
@@ -12,7 +12,7 @@ services:
       - POSTGRES_PASSWORD=password
 
   api:
-    container_name: api
+    container_name: apicourses
     build:
       context: .
       dockerfile: Dockerfile
