@@ -58,6 +58,7 @@ class CourseQueryServiceImpl(CourseQueryService):
         name: Optional[str],
         creator_id: Optional[str],
         collab_id: Optional[str],
+        subscription_id: Optional[int],
         inactive: Optional[bool],
         category: Optional[str],
         language: Optional[str],
@@ -81,6 +82,8 @@ class CourseQueryServiceImpl(CourseQueryService):
                 courses_q = courses_q.filter(
                     CourseDTO.collabs.any(user_id=collab_id, active=True)
                 )
+            if subscription_id is not None:
+                courses_q = courses_q.filter_by(subscription_id=subscription_id)
             if language:
                 courses_q = courses_q.filter_by(language=language)
             if ignore_free:

@@ -13,6 +13,7 @@ class Course:
         categories: List[str],
         presentation_video: str,
         image: str,
+        subscription_id: int,
         created_at: Optional[int] = None,
         updated_at: Optional[int] = None,
     ):
@@ -25,6 +26,7 @@ class Course:
         self.categories: List[str] = categories
         self.presentation_video: str = presentation_video
         self.image: str = image
+        self.subscription_id = subscription_id
         self.created_at: Optional[int] = created_at
         self.updated_at: Optional[int] = updated_at
 

@@ -28,6 +28,7 @@ class CourseQueryService(ABC):
         name: Optional[str],
         creator_id: Optional[str],
         collab_id: Optional[str],
+        subscription_id: Optional[int],
         inactive: Optional[bool],
         category: Optional[str],
         language: Optional[str],

@@ -10,7 +10,8 @@ class CourseReadModel(BaseModel):
     id: str = Field(example="vytxeTZskVKR7C7WgdSP3d")
     creator_id: str = Field(example="creator1")
     name: str = Field(example="C Programming For Beginners - Master the C Language")
-    price: int = Field(ge=0, example=10)
+    price: float = Field(ge=0, example=10)
+    subscription_id: int = Field(ge=0, le=2, example=0)
     language: str = Field(example="English")
     description: str = Field(example="Learn how to program with C")
     categories: List[str] = Field(example=["Programming"])
@@ -33,6 +34,7 @@ class CourseReadModel(BaseModel):
             creator_id=course.creator_id,
             name=course.name,
             price=course.price,
+            subscription_id=course.subscription_id,
             language=course.language,
             description=course.description,
             categories=course.categories,
