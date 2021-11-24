@@ -57,7 +57,7 @@ class CourseQueryServiceImpl(CourseQueryService):
         ids: Optional[List[str]],
         name: Optional[str],
         creator_id: Optional[str],
-        colab_id: Optional[str],
+        collab_id: Optional[str],
         inactive: Optional[bool],
         category: Optional[str],
         language: Optional[str],
@@ -75,13 +75,13 @@ class CourseQueryServiceImpl(CourseQueryService):
                 courses_q = courses_q.filter_by(name=name)
             if creator_id:
                 courses_q = courses_q.filter_by(creator_id=creator_id)
-            if colab_id:
+            if collab_id:
                 courses_q = courses_q.filter(
-                    CourseDTO.collabs.any(user_id=colab_id)
+                    CourseDTO.collabs.any(user_id=collab_id)
                 )
-            if colab_id and not inactive:
+            if collab_id and not inactive:
                 courses_q = courses_q.filter(
-                    CourseDTO.collabs.any(user_id=colab_id, active=True)
+                    CourseDTO.collabs.any(user_id=collab_id, active=True)
                 )
             if language:
                 courses_q = courses_q.filter_by(language=language)
