@@ -2,7 +2,16 @@ from datetime import datetime
 from typing import List, Union
 
 import shortuuid
-from sqlalchemy import BigInteger, Boolean, Column, Float, ForeignKey, String, Text
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Column,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
 from sqlalchemy.orm import relationship
 
 from app.domain.course import Course
@@ -40,6 +49,7 @@ class CourseDTO(Base):
     creator_id: Union[str, Column] = Column(String, autoincrement=False)
     name: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     price: Union[float, Column] = Column(Float, nullable=False)
+    subscription_id: Union[int, Column] = Column(Integer, nullable=False)
     language: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     description: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
     presentation_video: Union[str, Column] = Column(
@@ -64,6 +74,7 @@ class CourseDTO(Base):
             categories=get_categories(self.categories),
             presentation_video=self.presentation_video,
             image=self.image,
+            subscription_id=self.subscription_id,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -74,6 +85,7 @@ class CourseDTO(Base):
             creator_id=self.creator_id,
             name=self.name,
             price=self.price,
+            subscription_id=self.subscription_id,
             language=self.language,
             description=self.description,
             categories=get_categories(self.categories),
@@ -104,6 +116,7 @@ class CourseDTO(Base):
             creator_id=course.creator_id,
             name=course.name,
             price=course.price,
+            subscription_id=course.subscription_id,
             language=course.language,
             description=course.description,
             categories=create_categories(course.id, course.categories),
