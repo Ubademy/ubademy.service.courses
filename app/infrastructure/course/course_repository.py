@@ -55,13 +55,17 @@ class CourseRepositoryImpl(CourseRepository):
     def update(self, course: Course):
         course_dto = CourseDTO.from_entity(course)
         try:
-            _course = self.session.query(CourseDTO).filter_by(id=course_dto.id).one()
+            _course: CourseDTO = (
+                self.session.query(CourseDTO).filter_by(id=course_dto.id).one()
+            )
             if course_dto.name:
                 _course.name = course_dto.name
             if course_dto.language:
                 _course.language = course_dto.language
             if course_dto.price is not None:
                 _course.price = course_dto.price
+            if course_dto.subscription_id is not None:
+                _course.subscription_id = course_dto.subscription_id
             if course_dto.description:
                 _course.description = course_dto.description
             _course.updated_at = course_dto.updated_at
