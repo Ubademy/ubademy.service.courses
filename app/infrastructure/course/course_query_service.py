@@ -77,11 +77,11 @@ class CourseQueryServiceImpl(CourseQueryService):
                 courses_q = courses_q.filter_by(creator_id=creator_id)
             if colab_id:
                 courses_q = courses_q.filter(
-                    CourseDTO.users.any(user_id=colab_id, role="colab")
+                    CourseDTO.collabs.any(user_id=colab_id)
                 )
             if colab_id and not inactive:
                 courses_q = courses_q.filter(
-                    CourseDTO.users.any(user_id=colab_id, role="colab", active=True)
+                    CourseDTO.collabs.any(user_id=colab_id, active=True)
                 )
             if language:
                 courses_q = courses_q.filter_by(language=language)
