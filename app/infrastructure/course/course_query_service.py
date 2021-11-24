@@ -76,9 +76,7 @@ class CourseQueryServiceImpl(CourseQueryService):
             if creator_id:
                 courses_q = courses_q.filter_by(creator_id=creator_id)
             if collab_id:
-                courses_q = courses_q.filter(
-                    CourseDTO.collabs.any(user_id=collab_id)
-                )
+                courses_q = courses_q.filter(CourseDTO.collabs.any(user_id=collab_id))
             if collab_id and not inactive:
                 courses_q = courses_q.filter(
                     CourseDTO.collabs.any(user_id=collab_id, active=True)
