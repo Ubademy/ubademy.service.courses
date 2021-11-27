@@ -26,6 +26,7 @@ from app.domain.course import (
     CoursesNotFoundError,
 )
 from app.domain.course.course_exception import CategoriesNotFoundError
+from app.domain.review.review_exception import UserAlreadyReviewedCourseError
 from app.infrastructure.course import (
     CourseCommandUseCaseUnitOfWorkImpl,
     CourseQueryServiceImpl,
@@ -41,6 +42,9 @@ from app.presentation.schema.content.content_error_message import (
 from app.presentation.schema.course.course_error_message import (
     ErrorMessageCourseNameAlreadyExists,
     ErrorMessageCourseNotFound,
+)
+from app.presentation.schema.review.review_error_message import (
+    ErrorMessageUserAlreadyReviewedCourse,
 )
 from app.usecase.collab.collab_query_model import (
     CollabReadModel,
@@ -67,6 +71,8 @@ from app.usecase.course import (
     CourseUpdateModel,
 )
 from app.usecase.course.course_query_model import PaginatedCourseReadModel
+from app.usecase.review.review_command_model import ReviewCreateModel
+from app.usecase.review.review_query_model import ReviewReadModel
 
 config.fileConfig("logging.conf", disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
@@ -328,6 +334,46 @@ async def delete_course(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+
+@app.post(
+    "/courses/{id}/reviews",
+    response_model=ReviewReadModel,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_409_CONFLICT: {
+            "model": ErrorMessageUserAlreadyReviewedCourse,
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+    },
+    tags=["reviews"],
+)
+async def add_review(
+    id: str,
+    data: ReviewCreateModel,
+    course_command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
+):
+    try:
+        review = course_command_usecase.add_review(id=id, data=data)
+    except UserAlreadyReviewedCourseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=e.message,
+        )
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return review
 
 
 @app.post(

@@ -13,12 +13,14 @@ from ...domain.content.content_exception import (
     ChapterAlreadyInCourseError,
     ContentNotFoundError,
 )
+from ...domain.review.review import Review
+from ...domain.review.review_exception import UserAlreadyReviewedCourseError
 from ...usecase.content.content_command_model import (
     ContentCreateModel,
     ContentUpdateModel,
 )
 from ...usecase.content.content_query_model import ContentReadModel
-from .course_dto import Category, Collab, Content, CourseDTO
+from .course_dto import Category, Collab, Content, CourseDTO, ReviewDTO
 
 
 class CourseRepositoryImpl(CourseRepository):
@@ -165,6 +167,21 @@ class CourseRepositoryImpl(CourseRepository):
         if course is None:
             raise CourseNotFoundError
         return course.has_active_collab_with_id(user_id) or course.creator_id == user_id
+
+    def add_review(self, review: Review):
+        try:
+            course: CourseDTO = (
+                self.session.query(CourseDTO).filter_by(id=review.course_id).first()
+            )
+            if course.has_review_from_user(review.id):
+                raise UserAlreadyReviewedCourseError
+            r = ReviewDTO.from_entity(review)
+            course.reviews.append(r)
+        except NoResultFound:
+            raise CourseNotFoundError
+        except:
+            raise
+        return r.to_read_model()
 
 
 class CourseCommandUseCaseUnitOfWorkImpl(CourseCommandUseCaseUnitOfWork):

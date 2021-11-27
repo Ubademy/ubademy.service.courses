@@ -15,11 +15,13 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from app.domain.course import Course
+from app.domain.review.review import Review
 from app.infrastructure.database import Base
 from app.usecase.collab.collab_query_model import CollabReadModel
 from app.usecase.content.content_command_model import ContentCreateModel
 from app.usecase.content.content_query_model import ContentReadModel
 from app.usecase.course import CourseReadModel
+from app.usecase.review.review_query_model import ReviewReadModel
 
 
 def unixtimestamp() -> int:
@@ -62,6 +64,7 @@ class CourseDTO(Base):
     categories = relationship("Category", cascade="all, delete")
     collabs = relationship("Collab", cascade="all, delete")
     content = relationship("Content", cascade="all, delete")
+    reviews = relationship("ReviewDTO", cascade="all, delete")
 
     def to_entity(self) -> Course:
         return Course(
@@ -105,6 +108,9 @@ class CourseDTO(Base):
             if int(i.chapter) == chapter:
                 return True
         return False
+
+    def has_review_from_user(self, id: str):
+        return len(list(filter(lambda r: r.id == id, self.reviews))) > 0
 
     @staticmethod
     def from_entity(course: Course) -> "CourseDTO":
@@ -206,4 +212,38 @@ class Content(Base):
             description=self.description,
             video=self.video,
             image=self.image,
+        )
+
+
+class ReviewDTO(Base):
+
+    __tablename__ = "reviews"
+    id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
+    course_id: Union[str, Column] = Column(
+        String, ForeignKey("courses.id"), autoincrement=False
+    )
+    recommended: Union[bool, Column] = Column(
+        Boolean, nullable=False, autoincrement=False
+    )
+    review: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
+    date: Union[int, Column] = Column(BigInteger, index=True, nullable=False)
+
+    @staticmethod
+    def from_entity(r: Review):
+        now = unixtimestamp()
+        return ReviewDTO(
+            id=r.id,
+            course_id=r.course_id,
+            recommended=r.recommended,
+            review=r.review,
+            date=now,
+        )
+
+    def to_read_model(self):
+        return ReviewReadModel(
+            id=self.id,
+            course_id=self.course_id,
+            recommended=self.recommended,
+            review=self.review,
+            date=self.date,
         )

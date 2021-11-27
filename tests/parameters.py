@@ -8,6 +8,7 @@ from app.usecase.content.content_command_model import (
     ContentUpdateModel,
 )
 from app.usecase.course import CourseUpdateModel
+from app.usecase.review.review_command_model import ReviewCreateModel
 
 content_1 = ContentCreateModel(
     title="FFT: Fast Fourier Transform",
@@ -47,6 +48,24 @@ course_dto_1 = CourseDTO(
     presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     content=[content_dto_1],
+    reviews=[],
+    created_at=1614007224642,
+    updated_at=1614007224642,
+)
+
+course_dto_1_reviewed = CourseDTO(
+    id="course_1",
+    creator_id="creator_1",
+    name="C Programming For Beginners - Master the C Language",
+    price=10,
+    subscription_id=0,
+    language="English",
+    description="This is a course",
+    categories=[Category(category="Programing")],
+    presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
+    content=[content_dto_1],
+    reviews=[],
     created_at=1614007224642,
     updated_at=1614007224642,
 )
@@ -140,6 +159,12 @@ course_dto_no_colabs = CourseDTO(
     collabs=[],
 )
 
+review_create_1 = ReviewCreateModel(
+    id="user_1",
+    recommended=True,
+    review="Hola",
+)
+
 
 query_course_1 = MagicMock()
 query_course_1.one = Mock(return_value=course_dto_1)
@@ -168,6 +193,12 @@ def mock_filter_course_1_content(id):
 def mock_filter_course_1(id):
     if id == course_dto_1.id:
         return query_course_1
+    raise CourseNotFoundError
+
+
+def mock_filter_course_1_reviewed(id):
+    if id == course_dto_1_reviewed.id:
+        return query_course_1_reviewed
     raise CourseNotFoundError
 
 
