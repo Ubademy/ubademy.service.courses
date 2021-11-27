@@ -19,7 +19,8 @@ from tests.parameters import (
     mock_filter_course_1_content,
     mock_filter_course_1_name_course,
     mock_filter_course_1_with_user,
-    user_1, review_create_1,
+    review_create_1,
+    user_1,
 )
 
 

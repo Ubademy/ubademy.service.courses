@@ -77,6 +77,7 @@ class TestCourseDTO:
             presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
+            recommendations={},
         )
 
         course_dto = CourseDTO.from_entity(course)
@@ -108,6 +109,7 @@ class TestCourseDTO:
             subscription_id=0,
             created_at=1614007224642,
             updated_at=9999994444444,
+            recommendations={},
         )
 
         course_dto = CourseDTO.from_entity(course)

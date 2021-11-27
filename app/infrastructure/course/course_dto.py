@@ -35,6 +35,13 @@ def get_categories(categories):
     return v
 
 
+def get_recommendations(reviews):
+    return {
+        "recommended": len(list(filter(lambda x: x.is_recommended(), reviews))),
+        "total": len(reviews),
+    }
+
+
 def create_categories(id, categories):
     v = []
     if categories is None:
@@ -45,7 +52,6 @@ def create_categories(id, categories):
 
 
 class CourseDTO(Base):
-
     __tablename__ = "courses"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
     creator_id: Union[str, Column] = Column(String, autoincrement=False)
@@ -78,6 +84,7 @@ class CourseDTO(Base):
             presentation_video=self.presentation_video,
             image=self.image,
             subscription_id=self.subscription_id,
+            recommendations=get_recommendations(self.reviews),
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -92,6 +99,7 @@ class CourseDTO(Base):
             language=self.language,
             description=self.description,
             categories=get_categories(self.categories),
+            recommendations=get_recommendations(self.reviews),
             presentation_video=self.presentation_video,
             image=self.image,
             created_at=self.created_at,
@@ -137,7 +145,6 @@ class CourseDTO(Base):
 
 
 class Category(Base):
-
     __tablename__ = "categories"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
     course_id: Union[str, Column] = Column(
@@ -147,7 +154,6 @@ class Category(Base):
 
 
 class Collab(Base):
-
     __tablename__ = "collabs"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
     user_id: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
@@ -176,7 +182,6 @@ class Collab(Base):
 
 
 class Content(Base):
-
     __tablename__ = "content"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
     title: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
@@ -216,7 +221,6 @@ class Content(Base):
 
 
 class ReviewDTO(Base):
-
     __tablename__ = "reviews"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
     course_id: Union[str, Column] = Column(
@@ -247,3 +251,6 @@ class ReviewDTO(Base):
             review=self.review,
             date=self.date,
         )
+
+    def is_recommended(self):
+        return self.recommended

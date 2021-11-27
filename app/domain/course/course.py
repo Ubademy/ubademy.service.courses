@@ -14,6 +14,7 @@ class Course:
         presentation_video: str,
         image: str,
         subscription_id: int,
+        recommendations: dict,
         created_at: Optional[int] = None,
         updated_at: Optional[int] = None,
     ):
@@ -26,7 +27,8 @@ class Course:
         self.categories: List[str] = categories
         self.presentation_video: str = presentation_video
         self.image: str = image
-        self.subscription_id = subscription_id
+        self.subscription_id: int = subscription_id
+        self.recommendations: dict = recommendations
         self.created_at: Optional[int] = created_at
         self.updated_at: Optional[int] = updated_at
 

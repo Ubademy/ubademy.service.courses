@@ -92,6 +92,7 @@ course_1 = Course(
     language="English",
     description="This is a course",
     categories=["Programing"],
+    recommendations={},
     presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     subscription_id=0,
@@ -108,6 +109,7 @@ course_dto_2 = CourseDTO(
     language="English",
     description="This is a course",
     categories=[],
+    reviews=[],
     presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
@@ -127,6 +129,7 @@ course_2 = CourseDTO(
     image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
     updated_at=1614007224642,
+    reviews=[],
 )
 
 colab_1 = Collab(
@@ -157,6 +160,7 @@ course_dto_no_colabs = CourseDTO(
     created_at=1614007224642,
     updated_at=1614007224642,
     collabs=[],
+    reviews=[],
 )
 
 review_create_1 = ReviewCreateModel(
@@ -169,6 +173,10 @@ review_create_1 = ReviewCreateModel(
 query_course_1 = MagicMock()
 query_course_1.one = Mock(return_value=course_dto_1)
 query_course_1.first = Mock(return_value=course_dto_1)
+
+query_course_1_reviewed = MagicMock()
+query_course_1_reviewed.one = Mock(return_value=course_dto_1_reviewed)
+query_course_1_reviewed.first = Mock(return_value=course_dto_1_reviewed)
 
 query_content_1 = MagicMock()
 query_content_1.one = Mock(return_value=content_dto_1)
