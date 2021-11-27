@@ -16,6 +16,7 @@ class TestCourse:
             presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
+            recommendations={},
         )
 
         assert course.id == "course_1"
@@ -38,6 +39,7 @@ class TestCourse:
             presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
+            recommendations={},
         )
 
         course_2 = Course(
@@ -51,6 +53,7 @@ class TestCourse:
             presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
+            recommendations={},
         )
 
         course_3 = Course(
@@ -64,6 +67,7 @@ class TestCourse:
             presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
+            recommendations={},
         )
 
         assert course_1 == course_2
@@ -89,6 +93,7 @@ class TestCourse:
             presentation_video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
+            recommendations={},
         )
 
         course.price = price

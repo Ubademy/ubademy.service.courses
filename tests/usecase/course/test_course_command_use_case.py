@@ -18,7 +18,9 @@ from tests.parameters import (
     mock_filter_course_1,
     mock_filter_course_1_content,
     mock_filter_course_1_name_course,
+    mock_filter_course_1_reviewed,
     mock_filter_course_1_with_user,
+    review_create_1,
     user_1,
 )
 
@@ -149,3 +151,19 @@ class TestCourseCommandUseCase:
 
         session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
         assert content.title is "a"
+
+    def test_add_review_should_return_review(self):
+        session = MagicMock()
+        session.query(CourseDTO).filter_by = Mock(
+            side_effect=mock_filter_course_1_reviewed
+        )
+        course_repository = CourseRepositoryImpl(session)
+        uow = CourseCommandUseCaseUnitOfWorkImpl(
+            session=session, course_repository=course_repository
+        )
+        course_command_usecase = CourseCommandUseCaseImpl(uow=uow)
+
+        review = course_command_usecase.add_review(id="course_1", data=review_create_1)
+
+        session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
+        assert review.id is review_create_1.id

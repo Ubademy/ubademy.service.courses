@@ -9,6 +9,7 @@ from app.usecase.course import CourseQueryService, CourseReadModel
 
 from ...domain.course import CourseNotFoundError
 from ...usecase.content.content_query_model import ContentReadModel
+from ...usecase.review.review_query_model import ReviewReadModel
 from .course_dto import Category, CourseDTO
 
 
@@ -134,3 +135,13 @@ class CourseQueryServiceImpl(CourseQueryService):
             raise
 
         return list(map(lambda c: c.to_read_model(), content))
+
+    def fetch_reviews_by_id(self, id: str) -> List[ReviewReadModel]:
+        try:
+            course = self.session.query(CourseDTO).filter_by(id=id).first()
+            if not course:
+                raise CourseNotFoundError
+        except:
+            raise
+
+        return list(map(lambda c: c.to_read_model(), course.reviews))
