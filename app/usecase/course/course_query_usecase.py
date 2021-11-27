@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple
 from app.domain.course import CourseNotFoundError
 
 from ..content.content_query_model import ContentReadModel
+from ..review.review_query_model import ReviewReadModel
 from .course_query_model import CourseReadModel
 from .course_query_service import CourseQueryService
 
@@ -48,6 +49,10 @@ class CourseQueryUseCase(ABC):
 
     @abstractmethod
     def user_is_creator(self, course_id: str, user_id: str) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def fetch_reviews_by_id(self, id: str) -> List[ReviewReadModel]:
         raise NotImplementedError
 
 
@@ -133,3 +138,10 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
     def user_is_creator(self, course_id: str, user_id: str) -> bool:
         course = self.fetch_course_by_id(course_id)
         return course is not None and course.creator_id == user_id
+
+    def fetch_reviews_by_id(self, id: str) -> List[ReviewReadModel]:
+        try:
+            r = self.course_query_service.fetch_reviews_by_id(id)
+        except:
+            raise
+        return r

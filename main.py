@@ -376,6 +376,38 @@ async def add_review(
     return review
 
 
+@app.get(
+    "/courses/{id}/reviews",
+    response_model=List[ReviewReadModel],
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageCourseNotFound,
+        },
+    },
+    tags=["reviews"],
+)
+async def get_reviews(
+    id: str,
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
+):
+    try:
+        reviews = query_usecase.fetch_reviews_by_id(id)
+
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return reviews
+
+
 @app.post(
     "/courses/{id}",
     response_model=CollabReadModel,
