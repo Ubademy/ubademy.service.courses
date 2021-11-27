@@ -10,9 +10,11 @@ from app.domain.course import (
     CourseRepository,
 )
 
+from ...domain.review.review import Review
 from ..collab.collab_query_model import CollabReadModel
 from ..content.content_command_model import ContentCreateModel, ContentUpdateModel
 from ..content.content_query_model import ContentReadModel
+from ..review.review_command_model import ReviewCreateModel
 from .course_command_model import CourseCreateModel, CourseUpdateModel
 from .course_query_model import CourseReadModel
 
@@ -73,6 +75,10 @@ class CourseCommandUseCase(ABC):
     def user_involved(self, course_id: str, user_id: str) -> bool:
         raise NotImplementedError
 
+    @abstractmethod
+    def add_review(self, id: str, data: ReviewCreateModel):
+        raise NotImplementedError
+
 
 class CourseCommandUseCaseImpl(CourseCommandUseCase):
     def __init__(
@@ -97,6 +103,7 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
                 presentation_video=data.presentation_video,
                 image=data.image,
                 subscription_id=data.subscription_id,
+                recommendations={},
             )
 
             existing_course = self.uow.course_repository.find_by_name(data.name)
@@ -130,6 +137,7 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
                 categories=data.categories,
                 presentation_video=data.presentation_video,
                 image=data.image,
+                recommendations={},
                 subscription_id=data.subscription_id,
                 created_at=existing_course.created_at,
             )
@@ -222,3 +230,22 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
         return self.uow.course_repository.user_involved(
             course_id=course_id, user_id=user_id
         )
+
+    def add_review(self, id: str, data: ReviewCreateModel):
+        try:
+            existing_course = self.uow.course_repository.find_by_id(id)
+            if existing_course is None:
+                raise CourseNotFoundError
+            rev = Review(
+                id=data.id,
+                course_id=id,
+                recommended=data.recommended,
+                review=data.review,
+            )
+            review = self.uow.course_repository.add_review(review=rev)
+            self.uow.commit()
+        except:
+            self.uow.rollback()
+            raise
+
+        return review

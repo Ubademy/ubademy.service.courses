@@ -81,3 +81,14 @@ class TestCourseQueryUseCase:
         assert len(courses) == 2
         assert courses[0].price == 10
         assert courses[1].price == 20
+
+    def test_fetch_reviews_by_id_should_return_reviews(self):
+        session = MagicMock()
+        session.query(CourseDTO).filter_by = Mock(side_effect=mock_filter_course_1)
+        course_query_service = CourseQueryServiceImpl(session)
+        course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
+
+        reviews = course_query_usecase.fetch_reviews_by_id("course_1")
+
+        session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
+        assert len(reviews) == 0

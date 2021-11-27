@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from app.domain.course import Course
+from app.domain.review.review import Review
 from app.usecase.collab.collab_query_model import CollabReadModel
 from app.usecase.content.content_command_model import (
     ContentCreateModel,
@@ -53,4 +54,8 @@ class CourseRepository(ABC):
 
     @abstractmethod
     def user_involved(self, course_id: str, user_id: str) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_review(self, review: Review):
         raise NotImplementedError
