@@ -15,8 +15,7 @@ update:
 	$(POETRY) update
 	$(POETRY_EXPORT)
 
-test: install  
-	$(MYPY) main.py ./${PACKAGE}/
+test: install
 	$(PYTEST) -vv
 
 fmt:
@@ -24,6 +23,7 @@ fmt:
 	$(BLACK) main.py ./${PACKAGE} ./tests
 
 lint:
+	$(MYPY) main.py ./${PACKAGE}/
 	$(PYLINT) main.py ./${PACKAGE}
 
 build:

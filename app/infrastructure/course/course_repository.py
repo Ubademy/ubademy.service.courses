@@ -153,7 +153,10 @@ class CourseRepositoryImpl(CourseRepository):
             if (
                 data.chapter is not None
                 and data.order is not None
-                and (int(data.chapter) is not int(_cont.chapter) or int(data.order) is not int(_cont.order))
+                and (
+                    int(data.chapter) is not int(_cont.chapter)
+                    or int(data.order) is not int(_cont.order)
+                )
             ):
                 if (
                     self.session.query(CourseDTO)
