@@ -132,7 +132,7 @@ class TestCourseCommandUseCase:
         content = course_command_usecase.add_content(content_1, "course_1")
 
         session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
-        assert content.title is content_1.title
+        assert content.chapter_title is content_1.chapter_title
 
     def test_update_content_should_return_updated_content(self):
         session = MagicMock()
@@ -150,7 +150,7 @@ class TestCourseCommandUseCase:
         )
 
         session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
-        assert content.title is "a"
+        assert content.chapter_title is "a"
 
     def test_add_review_should_return_review(self):
         session = MagicMock()

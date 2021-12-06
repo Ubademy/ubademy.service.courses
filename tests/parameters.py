@@ -11,16 +11,19 @@ from app.usecase.course import CourseUpdateModel
 from app.usecase.review.review_command_model import ReviewCreateModel
 
 content_1 = ContentCreateModel(
-    title="FFT: Fast Fourier Transform",
+    chapter_title="FFT: Fast Fourier Transform",
+    subtitle="Definition",
     chapter=2,
+    order=0,
     description="A fast Fourier transform (FFT) is an algorithm.",
     video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
 )
 
 content_1_update = ContentUpdateModel(
-    title="a",
+    chapter_title="a",
     chapter=3,
+    order=0,
     description="b",
     video="c",
     image="d",
@@ -28,8 +31,10 @@ content_1_update = ContentUpdateModel(
 
 content_dto_1 = Content(
     id="content_1",
-    title="FFT: Fast Fourier Transform",
+    chapter_title="FFT: Fast Fourier Transform",
+    subtitle="Definition",
     chapter=1,
+    order=0,
     description="A fast Fourier transform (FFT) is an algorithm.",
     video="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
