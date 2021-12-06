@@ -4,8 +4,10 @@ from pydantic import BaseModel, Field
 class ContentReadModel(BaseModel):
 
     id: str = Field(example="vytxeTZskVKR7C7WgdSP3d")
-    title: str = Field(example="FFT: Fast Fourier Transform")
+    chapter_title: str = Field(example="FFT: Fast Fourier Transform")
+    subtitle: str = Field(example="Definition")
     chapter: int = Field(ge=0, example=1)
+    order: int = Field(ge=0, example=0)
     description: str = Field(
         example="A fast Fourier transform (FFT) is an algorithm that computes the discrete Fourier transform (DFT) of "
         "a sequence, or its inverse (IDFT). Fourier analysis converts a signal from its original domain ("

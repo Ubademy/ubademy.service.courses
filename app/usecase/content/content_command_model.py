@@ -3,8 +3,10 @@ from pydantic import BaseModel, Field
 
 class ContentCreateModel(BaseModel):
 
-    title: str = Field(example="FFT: Fast Fourier Transform")
+    chapter_title: str = Field(example="FFT: Fast Fourier Transform")
+    subtitle: str = Field(example="Definition")
     chapter: int = Field(ge=0, example=1)
+    order: int = Field(ge=0, example=0)
     description: str = Field(
         example="A fast Fourier transform (FFT) is an algorithm that computes the discrete Fourier transform (DFT) of "
         "a sequence, or its inverse (IDFT). Fourier analysis converts a signal from its original domain ("
@@ -22,8 +24,10 @@ class ContentCreateModel(BaseModel):
 
 class ContentUpdateModel(BaseModel):
 
-    title: str = Field(default=None, example="FFT: Fast Fourier Transform")
+    chapter_title: str = Field(default=None, example="FFT: Fast Fourier Transform")
+    subtitle: str = Field(default=None, example="Definition")
     chapter: int = Field(default=None, ge=0, example=1)
+    order: int = Field(default=None, ge=0, example=0)
     description: str = Field(
         default=None,
         example="A fast Fourier transform (FFT) is an algorithm that computes the discrete Fourier transform (DFT) of "

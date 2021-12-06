@@ -111,9 +111,9 @@ class CourseDTO(Base):
             len(list(filter(lambda c: c.active and c.user_id == id, self.collabs))) > 0
         )
 
-    def has_content_with_chapter(self, chapter: int):
+    def has_content_with_chapter(self, chapter: int, order: int):
         for i in self.content:
-            if int(i.chapter) == chapter:
+            if int(i.chapter) == chapter and int(i.order) == order:
                 return True
         return False
 
@@ -184,11 +184,15 @@ class Collab(Base):
 class Content(Base):
     __tablename__ = "content"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
-    title: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    chapter_title: Union[str, Column] = Column(
+        String, nullable=False, autoincrement=False
+    )
+    subtitle: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     course_id: Union[str, Column] = Column(
         String, ForeignKey("courses.id"), autoincrement=False
     )
     chapter: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    order: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     description: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
     video: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     image: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
@@ -200,9 +204,11 @@ class Content(Base):
     ) -> "Content":
         return Content(
             id=id,
-            title=content.title,
+            chapter_title=content.chapter_title,
+            subtitle=content.subtitle,
             course_id=course_id,
             chapter=content.chapter,
+            order=content.order,
             description=content.description,
             video=content.video,
             image=content.image,
@@ -212,8 +218,10 @@ class Content(Base):
     def to_read_model(self):
         return ContentReadModel(
             id=self.id,
-            title=self.title,
+            chapter_title=self.chapter_title,
+            subtitle=self.subtitle,
             chapter=self.chapter,
+            order=self.order,
             description=self.description,
             video=self.video,
             image=self.image,
