@@ -130,11 +130,11 @@ class CourseQueryServiceImpl(CourseQueryService):
             if not course:
                 raise CourseNotFoundError
             content = list(filter(lambda c: c.active, course.content))
-
+            cont = sorted(content, key=lambda c: (c.chapter, c.order))
         except:
             raise
 
-        return list(map(lambda c: c.to_read_model(), content))
+        return list(map(lambda c: c.to_read_model(), cont))
 
     def fetch_reviews_by_id(self, id: str) -> List[ReviewReadModel]:
         try:

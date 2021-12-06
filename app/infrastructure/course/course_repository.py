@@ -119,7 +119,7 @@ class CourseRepositoryImpl(CourseRepository):
         try:
             uuid = shortuuid.uuid()
             course = self.session.query(CourseDTO).filter_by(id=course_id).first()
-            if course.has_content_with_chapter(data.chapter):
+            if course.has_content_with_chapter(data.chapter, data.order):
                 raise ChapterAlreadyInCourseError
             content = Content.from_create_model(
                 id=uuid, content=data, course_id=course_id
@@ -138,8 +138,10 @@ class CourseRepositoryImpl(CourseRepository):
             _cont = self.session.query(Content).filter_by(id=content_id).first()
             if not _cont:
                 raise ContentNotFoundError
-            if data.title:
-                _cont.title = data.title
+            if data.chapter_title:
+                _cont.chapter_title = data.chapter_title
+            if data.subtitle:
+                _cont.subtitle = data.subtitle
             if data.active is not None:
                 _cont.active = data.active
             if data.description:
@@ -148,15 +150,23 @@ class CourseRepositoryImpl(CourseRepository):
                 _cont.video = data.video
             if data.image:
                 _cont.image = data.image
-            if data.chapter is not None and int(data.chapter) is not int(_cont.chapter):
+            if (
+                data.chapter is not None
+                and data.order is not None
+                and (
+                    int(data.chapter) is not int(_cont.chapter)
+                    or int(data.order) is not int(_cont.order)
+                )
+            ):
                 if (
                     self.session.query(CourseDTO)
                     .filter_by(id=course_id)
                     .one()
-                    .has_content_with_chapter(data.chapter)
+                    .has_content_with_chapter(data.chapter, data.order)
                 ):
                     raise ChapterAlreadyInCourseError
                 _cont.chapter = data.chapter
+                _cont.order = data.order
         except:
             raise
 
