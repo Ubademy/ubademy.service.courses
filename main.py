@@ -58,7 +58,7 @@ from app.usecase.content.content_command_model import (
     ContentCreateModel,
     ContentUpdateModel,
 )
-from app.usecase.content.content_query_model import ContentReadModel
+from app.usecase.content.content_query_model import ChapterReadModel, ContentReadModel
 from app.usecase.course import (
     CourseCommandUseCase,
     CourseCommandUseCaseImpl,
@@ -636,7 +636,7 @@ def check_user_involved_in_course(cid: str, uid: str, command: CourseCommandUseC
 
 @app.get(
     "/courses/{id}/content",
-    response_model=List[ContentReadModel],
+    response_model=List[ChapterReadModel],
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_404_NOT_FOUND: {

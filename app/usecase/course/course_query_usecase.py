@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 
 from app.domain.course import CourseNotFoundError
 
-from ..content.content_query_model import ContentReadModel
+from ..content.content_query_model import ChapterReadModel
 from ..review.review_query_model import ReviewReadModel
 from .course_query_model import CourseReadModel
 from .course_query_service import CourseQueryService
@@ -44,7 +44,7 @@ class CourseQueryUseCase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
+    def fetch_content_by_id(self, id: str) -> List[ChapterReadModel]:
         raise NotImplementedError
 
     @abstractmethod
@@ -127,13 +127,22 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
 
         return courses, count
 
-    def fetch_content_by_id(self, id: str) -> List[ContentReadModel]:
+    def fetch_content_by_id(self, id: str) -> List[ChapterReadModel]:
         try:
             content = self.course_query_service.fetch_content_by_id(id)
+            v: List[ChapterReadModel] = []
+            chapter = -1
+            index = -1
+            for c in content:
+                if c.chapter != chapter:
+                    chapter = c.chapter
+                    v.append(ChapterReadModel.from_content_read_model(c))
+                    index += 1
+                v[index].content.append(c)
         except:
             raise
 
-        return content
+        return v
 
     def user_is_creator(self, course_id: str, user_id: str) -> bool:
         course = self.fetch_course_by_id(course_id)
