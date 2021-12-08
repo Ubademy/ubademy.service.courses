@@ -9,16 +9,12 @@ from app.domain.course import Course, CourseNotFoundError, CourseRepository
 from app.usecase.collab.collab_query_model import CollabReadModel
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
 
-from ...domain.content.content_exception import (
-    ChapterAlreadyInCourseError,
-    ContentNotFoundError,
-)
+from ...domain.content.content_exception import (ChapterAlreadyInCourseError,
+                                                 ContentNotFoundError)
 from ...domain.review.review import Review
 from ...domain.review.review_exception import UserAlreadyReviewedCourseError
-from ...usecase.content.content_command_model import (
-    ContentCreateModel,
-    ContentUpdateModel,
-)
+from ...usecase.content.content_command_model import (ContentCreateModel,
+                                                      ContentUpdateModel)
 from ...usecase.content.content_query_model import ContentReadModel
 from .course_dto import Category, Collab, Content, CourseDTO, ReviewDTO
 
@@ -138,10 +134,8 @@ class CourseRepositoryImpl(CourseRepository):
             _cont = self.session.query(Content).filter_by(id=content_id).first()
             if not _cont:
                 raise ContentNotFoundError
-            if data.chapter_title:
-                _cont.chapter_title = data.chapter_title
-            if data.subtitle:
-                _cont.subtitle = data.subtitle
+            if data.title:
+                _cont.title = data.title
             if data.active is not None:
                 _cont.active = data.active
             if data.description:

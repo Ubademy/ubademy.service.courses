@@ -184,10 +184,7 @@ class Collab(Base):
 class Content(Base):
     __tablename__ = "content"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
-    chapter_title: Union[str, Column] = Column(
-        String, nullable=False, autoincrement=False
-    )
-    subtitle: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    title: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     course_id: Union[str, Column] = Column(
         String, ForeignKey("courses.id"), autoincrement=False
     )
@@ -204,8 +201,7 @@ class Content(Base):
     ) -> "Content":
         return Content(
             id=id,
-            chapter_title=content.chapter_title,
-            subtitle=content.subtitle,
+            title=content.title,
             course_id=course_id,
             chapter=content.chapter,
             order=content.order,
@@ -218,8 +214,7 @@ class Content(Base):
     def to_read_model(self):
         return ContentReadModel(
             id=self.id,
-            chapter_title=self.chapter_title,
-            subtitle=self.subtitle,
+            title=self.title,
             chapter=self.chapter,
             order=self.order,
             description=self.description,
