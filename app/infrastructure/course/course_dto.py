@@ -232,7 +232,7 @@ class ReviewDTO(Base):
     __tablename__ = "reviews"
     id: Union[str, Column] = Column(String, primary_key=True, autoincrement=False)
     course_id: Union[str, Column] = Column(
-        String, ForeignKey("courses.id"), autoincrement=False
+        String, ForeignKey("courses.id"), primary_key=True, autoincrement=False
     )
     recommended: Union[bool, Column] = Column(
         Boolean, nullable=False, autoincrement=False
