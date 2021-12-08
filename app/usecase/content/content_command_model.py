@@ -3,8 +3,7 @@ from pydantic import BaseModel, Field
 
 class ContentCreateModel(BaseModel):
 
-    chapter_title: str = Field(example="FFT: Fast Fourier Transform")
-    subtitle: str = Field(example="Definition")
+    title: str = Field(example="FFT: Fast Fourier Transform")
     chapter: int = Field(ge=0, example=1)
     order: int = Field(ge=0, example=0)
     description: str = Field(
@@ -24,8 +23,7 @@ class ContentCreateModel(BaseModel):
 
 class ContentUpdateModel(BaseModel):
 
-    chapter_title: str = Field(default=None, example="FFT: Fast Fourier Transform")
-    subtitle: str = Field(default=None, example="Definition")
+    title: str = Field(default=None, example="FFT: Fast Fourier Transform")
     chapter: int = Field(default=None, ge=0, example=1)
     order: int = Field(default=None, ge=0, example=0)
     description: str = Field(

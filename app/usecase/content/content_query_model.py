@@ -6,8 +6,7 @@ from pydantic import BaseModel, Field
 class ContentReadModel(BaseModel):
 
     id: str = Field(example="vytxeTZskVKR7C7WgdSP3d")
-    chapter_title: str = Field(example="FFT: Fast Fourier Transform")
-    subtitle: str = Field(example="Definition")
+    title: str = Field(example="FFT: Fast Fourier Transform")
     chapter: int = Field(ge=0, example=1)
     order: int = Field(ge=0, example=0)
     description: str = Field(
@@ -24,7 +23,6 @@ class ContentReadModel(BaseModel):
 
 class ChapterReadModel(BaseModel):
 
-    chapter_title: str = Field(example="FFT: Fast Fourier Transform")
     chapter: int = Field(ge=0, example=1)
     content: List[ContentReadModel] = Field(
         default=[], example=ContentReadModel.schema()
@@ -33,7 +31,6 @@ class ChapterReadModel(BaseModel):
     @classmethod
     def from_content_read_model(cls, c: ContentReadModel):
         return ChapterReadModel(
-            chapter_title=c.chapter_title,
             chapter=c.chapter,
             content=[],
         )
