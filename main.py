@@ -557,6 +557,8 @@ async def get_course_collabs(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
+    logger.info(server_response.text)
+    logger.info(json.loads(server_response.text))
     return json.loads(server_response.text)
 
 
