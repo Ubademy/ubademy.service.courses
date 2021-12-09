@@ -93,8 +93,6 @@ class CourseRepositoryImpl(CourseRepository):
             course.collabs.append(Collab.from_read_model(user))
         except NoResultFound:
             raise CourseNotFoundError
-        except:
-            raise
         return user
 
     def deactivate_collab_from_course(self, user_id, course_id):
@@ -123,8 +121,6 @@ class CourseRepositoryImpl(CourseRepository):
             course.content.append(content)
         except NoResultFound:
             raise CourseNotFoundError
-        except:
-            raise
         return content.to_read_model()
 
     def update_content_from_course(
@@ -183,8 +179,6 @@ class CourseRepositoryImpl(CourseRepository):
             course.reviews.append(r)
         except NoResultFound:
             raise CourseNotFoundError
-        except:
-            raise
         return r.to_read_model()
 
 
