@@ -318,8 +318,10 @@ async def delete_course(
 ):
     try:
         check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
+        c = query_usecase.fetch_course_by_id(id)
+        q_param = {"course_name": c.name}
         course_command_usecase.delete_course_by_id(id)
-        requests.patch(microservices.get("subscriptions") + "subscriptions/" + id + "/enrollments")
+        requests.patch(microservices.get("subscriptions") + "subscriptions/" + id + "/enrollments", params=q_param)
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
