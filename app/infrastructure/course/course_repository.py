@@ -9,12 +9,16 @@ from app.domain.course import Course, CourseNotFoundError, CourseRepository
 from app.usecase.collab.collab_query_model import CollabReadModel
 from app.usecase.course import CourseCommandUseCaseUnitOfWork
 
-from ...domain.content.content_exception import (ChapterAlreadyInCourseError,
-                                                 ContentNotFoundError)
+from ...domain.content.content_exception import (
+    ChapterAlreadyInCourseError,
+    ContentNotFoundError,
+)
 from ...domain.review.review import Review
 from ...domain.review.review_exception import UserAlreadyReviewedCourseError
-from ...usecase.content.content_command_model import (ContentCreateModel,
-                                                      ContentUpdateModel)
+from ...usecase.content.content_command_model import (
+    ContentCreateModel,
+    ContentUpdateModel,
+)
 from ...usecase.content.content_query_model import ContentReadModel
 from .course_dto import Category, Collab, Content, CourseDTO, ReviewDTO
 

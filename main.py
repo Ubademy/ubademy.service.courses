@@ -46,10 +46,7 @@ from app.presentation.schema.course.course_error_message import (
 from app.presentation.schema.review.review_error_message import (
     ErrorMessageUserAlreadyReviewedCourse,
 )
-from app.usecase.collab.collab_query_model import (
-    CollabReadModel,
-    PaginatedUserReadModel,
-)
+from app.usecase.collab.collab_query_model import CollabReadModel, UserReadModel
 from app.usecase.collab.collab_query_usecase import (
     CollabQueryUseCase,
     CollabQueryUseCaseImpl,
@@ -190,7 +187,6 @@ async def get_courses_filtering(
     offset: int = 0,
     course_query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
-
     try:
         if not free and not paid:
             free = not free
@@ -319,9 +315,15 @@ async def delete_course(
     try:
         check_user_creator_permission(cid=id, uid=uid, query=query_usecase)  # type: ignore
         c = query_usecase.fetch_course_by_id(id)
+        if c is None:
+            raise CourseNotFoundError
         q_param = {"course_name": c.name}
         course_command_usecase.delete_course_by_id(id)
-        requests.patch(microservices.get("subscriptions") + "subscriptions/" + id + "/enrollments", params=q_param)
+        url: str = microservices.get("subscriptions") # type: ignore
+        requests.patch(
+            url + "subscriptions/" + id + "/enrollments",
+            params=q_param,
+        )
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -499,8 +501,8 @@ async def deactivate_collab(
 
 
 try:
-    microservices = os.environ["MICROSERVICES"]
-    microservices = ast.literal_eval(microservices)
+    m: str = os.environ["MICROSERVICES"]
+    microservices: dict = ast.literal_eval(m)
 except KeyError as e:
     microservices = {}  # type: ignore
 
@@ -523,7 +525,7 @@ def get_users(uids, request, limit, offset):
 
 @app.get(
     "/courses/{id}/collabs",
-    response_model=PaginatedUserReadModel,
+    response_model=List[UserReadModel],
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_404_NOT_FOUND: {
@@ -545,7 +547,7 @@ async def get_course_collabs(
         logger.info(server_response)
     except NoCollabsInCourseError as e:
         logger.info(e)
-        return PaginatedUserReadModel(users=[], count=0)
+        return []
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
