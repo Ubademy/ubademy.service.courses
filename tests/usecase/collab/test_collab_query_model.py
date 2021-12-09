@@ -9,6 +9,7 @@ class TestCollabQueryModel:
                 username="user_1",
                 name="user_1",
                 lastName="user_1",
+                active=True,
                 role=1,
                 dateOfBirth="user_1",
                 country="user_1",

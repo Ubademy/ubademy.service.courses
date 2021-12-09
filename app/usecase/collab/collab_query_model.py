@@ -8,6 +8,7 @@ class UserReadModel(BaseModel):
     id: str = Field(example="Kgj1yXyrZ4NBeplhONPJ4xeLuQv2")
     username: str = Field(example="jany99")
     name: str = Field(example="Jane")
+    active: bool = Field(example=True)
     lastName: str = Field(example="Doe")
     role: int = Field(example=1)
     dateOfBirth: str = Field(example="Wed Nov 10 2021")
