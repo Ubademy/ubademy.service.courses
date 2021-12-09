@@ -545,7 +545,7 @@ async def get_course_collabs(
         logger.info(server_response)
     except NoCollabsInCourseError as e:
         logger.info(e)
-        return []
+        return PaginatedUserReadModel(users=[], count=0)
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
