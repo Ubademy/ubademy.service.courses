@@ -165,6 +165,7 @@ class Collab(Base):
     def to_read_model(self) -> CollabReadModel:
         return CollabReadModel(
             id=self.user_id,
+            active=self.active,
             course_id=self.course_id,
         )
 
