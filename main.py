@@ -319,7 +319,7 @@ async def delete_course(
             raise CourseNotFoundError
         q_param = {"course_name": c.name}
         course_command_usecase.delete_course_by_id(id)
-        url: str = microservices.get("subscriptions") # type: ignore
+        url: str = microservices.get("subscriptions")  # type: ignore
         requests.patch(
             url + "subscriptions/" + id + "/enrollments",
             params=q_param,

@@ -84,7 +84,7 @@ class CourseRepositoryImpl(CourseRepository):
     def delete_by_id(self, id: str):
         try:
             course = self.session.query(CourseDTO).filter_by(id=id).first()
-            self.session.delete(course)
+            course.active = False
         except:
             raise
 

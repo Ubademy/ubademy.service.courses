@@ -54,6 +54,7 @@ course_dto_1 = CourseDTO(
     reviews=[],
     created_at=1614007224642,
     updated_at=1614007224642,
+    active=True,
 )
 
 course_dto_1_reviewed = CourseDTO(
@@ -71,6 +72,7 @@ course_dto_1_reviewed = CourseDTO(
     reviews=[],
     created_at=1614007224642,
     updated_at=1614007224642,
+    active=True,
 )
 
 course_1_update = CourseUpdateModel(
@@ -92,6 +94,7 @@ course_1 = Course(
     creator_id="creator_1",
     name="C Programming For Beginners - Master the C Language",
     price=10,
+    active=True,
     language="English",
     description="This is a course",
     categories=["Programing"],
@@ -117,6 +120,7 @@ course_dto_2 = CourseDTO(
     image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
     created_at=1614007224642,
     updated_at=1614007224642,
+    active=True,
 )
 
 course_2 = CourseDTO(
@@ -133,6 +137,7 @@ course_2 = CourseDTO(
     created_at=1614007224642,
     updated_at=1614007224642,
     reviews=[],
+    active=True,
 )
 
 colab_1 = Collab(
@@ -164,6 +169,7 @@ course_dto_no_colabs = CourseDTO(
     updated_at=1614007224642,
     collabs=[],
     reviews=[],
+    active=True,
 )
 
 review_create_1 = ReviewCreateModel(
