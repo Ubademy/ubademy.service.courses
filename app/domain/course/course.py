@@ -8,6 +8,7 @@ class Course:
         creator_id: str,
         name: str,
         price: float,
+        active: bool,
         language: str,
         description: str,
         categories: List[str],
@@ -22,6 +23,7 @@ class Course:
         self.creator_id: str = creator_id
         self.name: str = name
         self.price: float = price
+        self.active: bool = active
         self.language: str = language
         self.description: str = description
         self.categories: List[str] = categories

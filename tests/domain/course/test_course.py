@@ -17,6 +17,7 @@ class TestCourse:
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
             recommendations={},
+            active=True,
         )
 
         assert course.id == "course_1"
@@ -40,6 +41,7 @@ class TestCourse:
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
             recommendations={},
+            active=True,
         )
 
         course_2 = Course(
@@ -54,6 +56,7 @@ class TestCourse:
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
             recommendations={},
+            active=True,
         )
 
         course_3 = Course(
@@ -68,6 +71,7 @@ class TestCourse:
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
             recommendations={},
+            active=True,
         )
 
         assert course_1 == course_2
@@ -94,6 +98,7 @@ class TestCourse:
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
             recommendations={},
+            active=True,
         )
 
         course.price = price

@@ -18,6 +18,7 @@ class TestCourseDTO:
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             created_at=1614007224642,
             updated_at=9999994444444,
+            active=True,
         )
 
         course = course_dto.to_read_model()
@@ -48,6 +49,7 @@ class TestCourseDTO:
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             created_at=1614007224642,
             updated_at=9999994444444,
+            active=True,
         )
 
         course = course_dto.to_entity()
@@ -78,6 +80,7 @@ class TestCourseDTO:
             image="https://static01.nyt.com/images/2017/09/26/science/26TB-PANDA/26TB-PANDA-superJumbo.jpg",
             subscription_id=0,
             recommendations={},
+            active=True,
         )
 
         course_dto = CourseDTO.from_entity(course)
@@ -110,6 +113,7 @@ class TestCourseDTO:
             created_at=1614007224642,
             updated_at=9999994444444,
             recommendations={},
+            active=True,
         )
 
         course_dto = CourseDTO.from_entity(course)
