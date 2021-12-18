@@ -73,6 +73,7 @@ class TestCourseQueryUseCase:
     def test_fetch_courses_by_filters_with_no_filters_should_return_all(self):
         session = MagicMock()
         session.query(CourseDTO).slice().all = Mock(side_effect=mock_fetch_all)
+        session.query(CourseDTO).filter_by = Mock(return_value=session.query(CourseDTO))
         course_query_service = CourseQueryServiceImpl(session)
         course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
 

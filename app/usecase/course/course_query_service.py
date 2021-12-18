@@ -30,7 +30,7 @@ class CourseQueryService(ABC):
         creator_id: Optional[str],
         collab_id: Optional[str],
         subscription_id: Optional[int],
-        inactive: Optional[bool],
+        inactive_collab: Optional[bool],
         category: Optional[str],
         language: Optional[str],
         ignore_free: Optional[bool],

@@ -17,3 +17,4 @@ disable=
     R0902, # too-many-instance-attributes
     C0301, # line-too-long
     R0914, # too-many-locals
+    R0912, # too-many-branches
