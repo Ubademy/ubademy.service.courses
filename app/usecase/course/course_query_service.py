@@ -5,6 +5,7 @@ from ..collab.collab_query_model import CollabReadModel
 from ..content.content_query_model import ContentReadModel
 from ..metrics.category_metrics_query_model import CategoryMetricsReadModel
 from ..metrics.new_courses_metrics_query_model import NewCoursesMetricsReadModel
+from ..metrics.susbcriptions_metrics_query_model import SubscriptionMetricsReadModel
 from ..review.review_query_model import ReviewReadModel
 from .course_query_model import CourseReadModel
 
@@ -63,4 +64,8 @@ class CourseQueryService(ABC):
 
     @abstractmethod
     def get_courses_metrics(self, year) -> NewCoursesMetricsReadModel:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_subscription_metrics(self) -> SubscriptionMetricsReadModel:
         raise NotImplementedError

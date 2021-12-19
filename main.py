@@ -74,6 +74,9 @@ from app.usecase.metrics.category_metrics_query_model import (
 from app.usecase.metrics.new_courses_metrics_query_model import (
     NewCoursesMetricsReadModel,
 )
+from app.usecase.metrics.susbcriptions_metrics_query_model import (
+    SubscriptionMetricsReadModel,
+)
 from app.usecase.review.review_command_model import ReviewCreateModel
 from app.usecase.review.review_query_model import ReviewReadModel
 
@@ -778,6 +781,27 @@ async def get_new_courses_metrics(
 ):
     try:
         metrics = query_usecase.get_course_metrics(year=year)
+
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return metrics
+
+
+@app.get(
+    "/courses/metrics/subscriptions",
+    response_model=SubscriptionMetricsReadModel,
+    status_code=status.HTTP_200_OK,
+    tags=["metrics"],
+)
+async def get_subscriptions_metrics(
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
+):
+    try:
+        metrics = query_usecase.get_subscription_metrics()
 
     except Exception as e:
         logger.error(e)

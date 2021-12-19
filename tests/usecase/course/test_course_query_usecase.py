@@ -122,3 +122,13 @@ class TestCourseQueryUseCase:
         metrics = course_query_usecase.get_course_metrics(year=2021)
 
         assert metrics.months == [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    def test_get_subscription_metrics(self):
+        session = MagicMock()
+        session.query().all = Mock(return_value=[course_dto_1, course_dto_2])
+        course_query_service = CourseQueryServiceImpl(session)
+        course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
+
+        metrics = course_query_usecase.get_subscription_metrics()
+
+        assert metrics.subscriptions == [2, 0, 0]
