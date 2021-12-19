@@ -1,5 +1,8 @@
+import logging
+from datetime import datetime
 from typing import List, Optional, Tuple
 
+from sqlalchemy import func
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 
@@ -9,8 +12,14 @@ from app.usecase.course import CourseQueryService, CourseReadModel
 
 from ...domain.course import CourseNotFoundError
 from ...usecase.content.content_query_model import ContentReadModel
+from ...usecase.metrics.category_metrics_query_model import CategoryMetricsReadModel
+from ...usecase.metrics.new_courses_metrics_query_model import (
+    NewCoursesMetricsReadModel,
+)
 from ...usecase.review.review_query_model import ReviewReadModel
 from .course_dto import Category, CourseDTO
+
+logger = logging.getLogger(__name__)
 
 
 class CourseQueryServiceImpl(CourseQueryService):
@@ -47,7 +56,7 @@ class CourseQueryServiceImpl(CourseQueryService):
 
     def find_all_categories(self) -> List[str]:
         try:
-            categories = self.session.query(Category).limit(100).all()
+            categories = self.session.query(Category).all()
         except:
             raise
 
@@ -147,3 +156,46 @@ class CourseQueryServiceImpl(CourseQueryService):
             raise
 
         return list(map(lambda c: c.to_read_model(), course.reviews))
+
+    def get_category_metrics(
+        self, limit: int
+    ) -> Tuple[List[CategoryMetricsReadModel], int]:
+        try:
+            cat_tuples = (
+                self.session.query(Category.category, func.count(Category.category))
+                .group_by(Category.category)
+                .all()
+            )
+            categories = list(
+                map(
+                    lambda c: CategoryMetricsReadModel(category=c[0], count=c[1]),
+                    cat_tuples,
+                )
+            )
+            categories = sorted(categories, key=lambda x: x.count, reverse=True)
+            count = len(self.find_all_categories())
+        except:
+            raise
+
+        return categories[0:limit], count
+
+    def get_courses_metrics(self, year) -> NewCoursesMetricsReadModel:
+        try:
+            courses = self.session.query(CourseDTO).all()
+            if year is not None:
+                courses = list(
+                    filter(
+                        lambda c: datetime.fromtimestamp(c.created_at / 1000).year
+                        == year,
+                        courses,
+                    )
+                )
+            else:
+                year = 0
+            months = [0] * 12
+            for i in courses:
+                months[datetime.fromtimestamp(i.created_at / 1000).month - 1] += 1
+        except:
+            raise
+
+        return NewCoursesMetricsReadModel(year=year, months=months)

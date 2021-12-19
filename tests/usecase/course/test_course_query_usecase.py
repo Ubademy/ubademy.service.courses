@@ -5,8 +5,14 @@ from sqlalchemy.exc import NoResultFound
 
 from app.domain.course import CourseNotFoundError, CoursesNotFoundError
 from app.infrastructure.course import CourseDTO, CourseQueryServiceImpl
+from app.infrastructure.course.course_dto import Category
 from app.usecase.course import CourseQueryUseCaseImpl
-from tests.parameters import mock_fetch_all, mock_filter_course_1
+from tests.parameters import (
+    course_dto_1,
+    course_dto_2,
+    mock_fetch_all,
+    mock_filter_course_1,
+)
 
 
 class TestCourseQueryUseCase:
@@ -93,3 +99,26 @@ class TestCourseQueryUseCase:
 
         session.query(CourseDTO).filter_by.assert_called_with(id="course_1")
         assert len(reviews) == 0
+
+    def test_get_category_metrics(self):
+        session = MagicMock()
+        session.query().group_by().all = Mock(return_value=[("Programming", 1)])
+        session.query().all = Mock(return_value=[Category(category="Programing")])
+        course_query_service = CourseQueryServiceImpl(session)
+        course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
+
+        metrics, count = course_query_usecase.get_category_metrics(limit=1)
+
+        assert len(metrics) == 1
+        assert count == 1
+        assert metrics[0].category == "Programming"
+
+    def test_get_courses_metrics(self):
+        session = MagicMock()
+        session.query().all = Mock(return_value=[course_dto_1, course_dto_2])
+        course_query_service = CourseQueryServiceImpl(session)
+        course_query_usecase = CourseQueryUseCaseImpl(course_query_service)
+
+        metrics = course_query_usecase.get_course_metrics(year=2021)
+
+        assert metrics.months == [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
