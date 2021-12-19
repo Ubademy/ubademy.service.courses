@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple
 
 from ..collab.collab_query_model import CollabReadModel
 from ..content.content_query_model import ContentReadModel
+from ..metrics.category_metrics_query_model import CategoryMetricsReadModel
 from ..review.review_query_model import ReviewReadModel
 from .course_query_model import CourseReadModel
 
@@ -51,4 +52,10 @@ class CourseQueryService(ABC):
 
     @abstractmethod
     def fetch_reviews_by_id(self, id: str) -> List[ReviewReadModel]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_category_metrics(
+        self, limit: int
+    ) -> Tuple[List[CategoryMetricsReadModel], int]:
         raise NotImplementedError

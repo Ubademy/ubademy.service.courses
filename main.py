@@ -68,6 +68,9 @@ from app.usecase.course import (
     CourseUpdateModel,
 )
 from app.usecase.course.course_query_model import PaginatedCourseReadModel
+from app.usecase.metrics.category_metrics_query_model import (
+    PaginatedCategoryMetricsReadModel,
+)
 from app.usecase.review.review_command_model import ReviewCreateModel
 from app.usecase.review.review_query_model import ReviewReadModel
 
@@ -736,3 +739,25 @@ async def update_content(
         )
 
     return updated_content
+
+
+@app.get(
+    "/courses/metrics/categories",
+    response_model=PaginatedCategoryMetricsReadModel,
+    status_code=status.HTTP_200_OK,
+    tags=["metrics"],
+)
+async def get_category_metrics(
+    limit: int = 10,
+    query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
+):
+    try:
+        metrics, count = query_usecase.get_category_metrics(limit=limit)
+
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return PaginatedCategoryMetricsReadModel(categories=metrics, count=count)

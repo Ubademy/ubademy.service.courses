@@ -22,16 +22,18 @@ fmt:
 	$(ISORT) main.py ./${PACKAGE} ./tests
 	$(BLACK) main.py ./${PACKAGE} ./tests
 
-lint:
+lint: fmt
 	$(MYPY) main.py ./${PACKAGE}/
 	$(PYLINT) main.py ./${PACKAGE}
 
-build:
+reset:
 	$ docker rm dbcourses
-	$ docker-compose build
+	$ docker-compose up --build
 
 run:
-	$ docker-compose up
+	$ docker-compose up --build
 
-all: fmt lint test build run
+checks: lint test
+
+all: checks reset
 

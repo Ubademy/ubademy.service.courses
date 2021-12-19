@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple
 from app.domain.course import CourseNotFoundError
 
 from ..content.content_query_model import ChapterReadModel
+from ..metrics.category_metrics_query_model import CategoryMetricsReadModel
 from ..review.review_query_model import ReviewReadModel
 from .course_query_model import CourseReadModel
 from .course_query_service import CourseQueryService
@@ -53,6 +54,12 @@ class CourseQueryUseCase(ABC):
 
     @abstractmethod
     def fetch_reviews_by_id(self, id: str) -> List[ReviewReadModel]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_category_metrics(
+        self, limit: int
+    ) -> Tuple[List[CategoryMetricsReadModel], int]:
         raise NotImplementedError
 
 
@@ -154,3 +161,14 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
         except:
             raise
         return r
+
+    def get_category_metrics(
+        self, limit: int
+    ) -> Tuple[List[CategoryMetricsReadModel], int]:
+        try:
+            categories, count = self.course_query_service.get_category_metrics(
+                limit=limit
+            )
+        except:
+            raise
+        return categories, count
