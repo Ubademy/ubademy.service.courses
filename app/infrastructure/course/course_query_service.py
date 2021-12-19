@@ -16,6 +16,9 @@ from ...usecase.metrics.category_metrics_query_model import CategoryMetricsReadM
 from ...usecase.metrics.new_courses_metrics_query_model import (
     NewCoursesMetricsReadModel,
 )
+from ...usecase.metrics.susbcriptions_metrics_query_model import (
+    SubscriptionMetricsReadModel,
+)
 from ...usecase.review.review_query_model import ReviewReadModel
 from .course_dto import Category, CourseDTO
 
@@ -199,3 +202,14 @@ class CourseQueryServiceImpl(CourseQueryService):
             raise
 
         return NewCoursesMetricsReadModel(year=year, months=months)
+
+    def get_subscription_metrics(self) -> SubscriptionMetricsReadModel:
+        try:
+            courses = self.session.query(CourseDTO).all()
+            subscriptions = [0] * 3
+            for i in courses:
+                subscriptions[i.subscription_id] += 1
+        except:
+            raise
+
+        return SubscriptionMetricsReadModel(subscriptions=subscriptions)
