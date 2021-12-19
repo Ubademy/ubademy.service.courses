@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import List, Optional, Tuple
 
 from sqlalchemy import func
@@ -12,6 +13,9 @@ from app.usecase.course import CourseQueryService, CourseReadModel
 from ...domain.course import CourseNotFoundError
 from ...usecase.content.content_query_model import ContentReadModel
 from ...usecase.metrics.category_metrics_query_model import CategoryMetricsReadModel
+from ...usecase.metrics.new_courses_metrics_query_model import (
+    NewCoursesMetricsReadModel,
+)
 from ...usecase.review.review_query_model import ReviewReadModel
 from .course_dto import Category, CourseDTO
 
@@ -174,3 +178,24 @@ class CourseQueryServiceImpl(CourseQueryService):
             raise
 
         return categories[0:limit], count
+
+    def get_courses_metrics(self, year) -> NewCoursesMetricsReadModel:
+        try:
+            courses = self.session.query(CourseDTO).all()
+            if year is not None:
+                courses = list(
+                    filter(
+                        lambda c: datetime.fromtimestamp(c.created_at / 1000).year
+                        == year,
+                        courses,
+                    )
+                )
+            else:
+                year = 0
+            months = [0] * 12
+            for i in courses:
+                months[datetime.fromtimestamp(i.created_at / 1000).month - 1] += 1
+        except:
+            raise
+
+        return NewCoursesMetricsReadModel(year=year, months=months)

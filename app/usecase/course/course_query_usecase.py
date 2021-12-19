@@ -5,6 +5,7 @@ from app.domain.course import CourseNotFoundError
 
 from ..content.content_query_model import ChapterReadModel
 from ..metrics.category_metrics_query_model import CategoryMetricsReadModel
+from ..metrics.new_courses_metrics_query_model import NewCoursesMetricsReadModel
 from ..review.review_query_model import ReviewReadModel
 from .course_query_model import CourseReadModel
 from .course_query_service import CourseQueryService
@@ -60,6 +61,10 @@ class CourseQueryUseCase(ABC):
     def get_category_metrics(
         self, limit: int
     ) -> Tuple[List[CategoryMetricsReadModel], int]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_course_metrics(self, year) -> NewCoursesMetricsReadModel:
         raise NotImplementedError
 
 
@@ -172,3 +177,10 @@ class CourseQueryUseCaseImpl(CourseQueryUseCase):
         except:
             raise
         return categories, count
+
+    def get_course_metrics(self, year) -> NewCoursesMetricsReadModel:
+        try:
+            metrics = self.course_query_service.get_courses_metrics(year=year)
+        except:
+            raise
+        return metrics
