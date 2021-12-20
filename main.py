@@ -332,8 +332,8 @@ async def delete_course(
         url_subs: str = microservices.get("subscriptions")  # type: ignore
         if (
             requests.get(
-                url_subs + "subscriptions/" + id + "/cancel-fee",
-                params={"creator_id": c.creator_id, "price": c.price},  # type: ignore
+                url_subs + "subscriptions/" + id + "/enrollments/cancel-fee",
+                params={"creator_id": c.creator_id, "price": c.price, "sub_id": c.subscription_id},  # type: ignore
             )
             is not True
         ):
