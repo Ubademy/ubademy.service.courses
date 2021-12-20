@@ -132,7 +132,7 @@ class CourseCommandUseCaseImpl(CourseCommandUseCase):
                 id=id,
                 creator_id=existing_course.creator_id,
                 name=data.name,
-                price=data.price,
+                price=existing_course.price,
                 language=data.language,
                 active=True,
                 description=data.description,

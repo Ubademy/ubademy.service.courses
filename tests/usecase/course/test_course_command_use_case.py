@@ -8,7 +8,6 @@ from app.infrastructure.course import (
     CourseDTO,
     CourseRepositoryImpl,
 )
-from app.infrastructure.course.course_dto import Content
 from app.usecase.course import CourseCommandUseCaseImpl
 from tests.parameters import (
     content_1,

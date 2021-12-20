@@ -24,3 +24,10 @@ class CategoriesNotFoundError(Exception):
 
     def __str__(self):
         return CategoriesNotFoundError.message
+
+
+class NotEnoughFundsError(Exception):
+    message = "Creator does not have enough funds to cancel course."
+
+    def __str__(self):
+        return NotEnoughFundsError.message
