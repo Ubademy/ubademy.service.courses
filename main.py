@@ -329,15 +329,21 @@ async def delete_course(
         c = query_usecase.fetch_course_by_id(id)
         if c is None:
             raise CourseNotFoundError
+
         url_subs: str = microservices.get("subscriptions")  # type: ignore
-        if (
-            requests.get(
+        url_payments: str = microservices.get("payments")  # type: ignore
+        wallet = requests.get(
+            url_payments + "payments/wallet/" + c.creator_id
+        )
+        cancel_fee = requests.get(
                 url_subs + "subscriptions/" + id + "/enrollments/cancel-fee",
                 params={"creator_id": c.creator_id, "price": c.price, "sub_id": c.subscription_id},  # type: ignore
             )
-            is not True
-        ):
+        logger.info(wallet.text)
+        logger.info(cancel_fee.text)
+        if float(json.loads(wallet.text)["balance"]) <= float(json.loads(cancel_fee.text)):
             raise NotEnoughFundsError
+
         requests.patch(
             url_subs + "subscriptions/" + id + "/enrollments",
             params={
