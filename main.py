@@ -25,7 +25,10 @@ from app.domain.course import (
     CourseRepository,
     CoursesNotFoundError,
 )
-from app.domain.course.course_exception import CategoriesNotFoundError
+from app.domain.course.course_exception import (
+    CategoriesNotFoundError,
+    NotEnoughFundsError,
+)
 from app.domain.review.review_exception import UserAlreadyReviewedCourseError
 from app.infrastructure.course import (
     CourseCommandUseCaseUnitOfWorkImpl,
@@ -326,19 +329,35 @@ async def delete_course(
         c = query_usecase.fetch_course_by_id(id)
         if c is None:
             raise CourseNotFoundError
-        q_param = {"course_name": c.name}
-        course_command_usecase.delete_course_by_id(id)
-        url: str = microservices.get("subscriptions")  # type: ignore
+        url_subs: str = microservices.get("subscriptions")  # type: ignore
+        if (
+            requests.get(
+                url_subs + "subscriptions/" + id + "/cancel-fee",
+                params={"creator_id": c.creator_id, "price": c.price},  # type: ignore
+            )
+            is not True
+        ):
+            raise NotEnoughFundsError
         requests.patch(
-            url + "subscriptions/" + id + "/enrollments",
-            params=q_param,
+            url_subs + "subscriptions/" + id + "/enrollments",
+            params={
+                "course_name": c.name,
+                "creator_id": c.creator_id,
+                "price": c.price,
+            },
         )
+        course_command_usecase.delete_course_by_id(id)
     except CourseNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=e.message,
         )
     except UserIsNotCreatorError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
+    except NotEnoughFundsError as e:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=e.message,
