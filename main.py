@@ -332,16 +332,16 @@ async def delete_course(
 
         url_subs: str = microservices.get("subscriptions")  # type: ignore
         url_payments: str = microservices.get("payments")  # type: ignore
-        wallet = requests.get(
-            url_payments + "payments/wallet/" + c.creator_id
-        )
+        wallet = requests.get(url_payments + "payments/wallet/" + c.creator_id)
         cancel_fee = requests.get(
-                url_subs + "subscriptions/" + id + "/enrollments/cancel-fee",
-                params={"creator_id": c.creator_id, "price": c.price, "sub_id": c.subscription_id},  # type: ignore
-            )
+            url_subs + "subscriptions/" + id + "/enrollments/cancel-fee",
+            params={"creator_id": c.creator_id, "price": c.price, "sub_id": c.subscription_id},  # type: ignore
+        )
         logger.info(wallet.text)
         logger.info(cancel_fee.text)
-        if float(json.loads(wallet.text)["balance"]) <= float(json.loads(cancel_fee.text)):
+        if float(json.loads(wallet.text)["balance"]) <= float(
+            json.loads(cancel_fee.text)
+        ):
             raise NotEnoughFundsError
 
         requests.patch(
