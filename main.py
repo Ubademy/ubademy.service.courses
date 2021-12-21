@@ -350,6 +350,7 @@ async def delete_course(
                 "course_name": c.name,
                 "creator_id": c.creator_id,
                 "price": c.price,
+                "sub_id": c.subscription_id,
             },
         )
         course_command_usecase.delete_course_by_id(id)
