@@ -72,6 +72,7 @@ class CourseQueryServiceImpl(CourseQueryService):
         creator_id: Optional[str],
         collab_id: Optional[str],
         subscription_id: Optional[int],
+        inactive_courses: Optional[bool],
         inactive_collab: Optional[bool],
         category: Optional[str],
         language: Optional[str],
@@ -85,7 +86,7 @@ class CourseQueryServiceImpl(CourseQueryService):
             courses_q = self.session.query(CourseDTO)
             if ids:
                 courses_q = courses_q.filter(CourseDTO.id.in_(ids))  # type: ignore
-            else:
+            elif not inactive_courses:
                 courses_q = courses_q.filter_by(active=True)
             if name:
                 courses_q = courses_q.filter_by(name=name)
