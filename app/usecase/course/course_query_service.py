@@ -37,6 +37,7 @@ class CourseQueryService(ABC):
         inactive_collab: Optional[bool],
         category: Optional[str],
         language: Optional[str],
+        country: Optional[str],
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
         text: Optional[str],

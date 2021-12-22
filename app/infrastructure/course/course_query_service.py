@@ -76,6 +76,7 @@ class CourseQueryServiceImpl(CourseQueryService):
         inactive_collab: Optional[bool],
         category: Optional[str],
         language: Optional[str],
+        country: Optional[str],
         ignore_free: Optional[bool],
         ignore_paid: Optional[bool],
         text: Optional[str],
@@ -100,6 +101,8 @@ class CourseQueryServiceImpl(CourseQueryService):
                 )
             if subscription_id is not None:
                 courses_q = courses_q.filter_by(subscription_id=subscription_id)
+            if country:
+                courses_q = courses_q.filter_by(country=country)
             if language:
                 courses_q = courses_q.filter_by(language=language)
             if ignore_free:

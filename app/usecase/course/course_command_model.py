@@ -9,6 +9,7 @@ class CourseCreateModel(BaseModel):
     price: float = Field(ge=0, example=10)
     subscription_id: int = Field(default=0, ge=0, le=2, example=0)
     language: str = Field(example="English")
+    country: str = Field(example="Argentina")
     description: str = Field(example="Learn how to program with C")
     categories: List[str] = Field(example=["Programming"])
     presentation_video: str = Field(
