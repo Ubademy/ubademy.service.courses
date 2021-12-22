@@ -4,7 +4,7 @@ from logging import config
 from fastapi import FastAPI
 
 from app.infrastructure.database import create_tables
-from routes import collabs, content, courses, metrics, reviews
+from routers import collabs, content, courses, metrics, reviews
 
 try:
     config.fileConfig("logging.conf", disable_existing_loggers=False)
