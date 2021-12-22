@@ -10,7 +10,7 @@ from app.usecase.metrics.category_metrics_query_model import (
 from app.usecase.metrics.new_courses_metrics_query_model import (
     NewCoursesMetricsReadModel,
 )
-from app.usecase.metrics.susbcriptions_metrics_query_model import (
+from app.usecase.metrics.subscriptions_metrics_query_model import (
     SubscriptionMetricsReadModel,
 )
 
