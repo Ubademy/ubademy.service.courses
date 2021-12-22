@@ -5,6 +5,7 @@ from typing import List, Optional
 import requests
 from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette import status
+from starlette.responses import Response
 
 from app.domain.collab.collab_exception import UserIsNotCreatorError
 from app.domain.course import (
@@ -260,6 +261,7 @@ def check_cancel_fee(c, id):
 async def delete_course(
     id: str,
     uid: str,
+    response: Response,
     command_usecase: CourseCommandUseCase = Depends(course_command_usecase),
     query_usecase: CourseQueryUseCase = Depends(course_query_usecase),
 ):
@@ -272,7 +274,7 @@ async def delete_course(
         check_cancel_fee(c, id)
 
         url_subs: str = microservices.get("subscriptions")  # type: ignore
-        requests.patch(
+        server_response = requests.patch(
             url_subs + "subscriptions/" + id + "/enrollments",
             params={
                 "course_name": c.name,
@@ -281,6 +283,9 @@ async def delete_course(
                 "sub_id": c.subscription_id,
             },
         )
+        if server_response.status_code != 204:
+            response.status_code = 500
+            return "payment error"
 
         command_usecase.delete_course_by_id(id)
     except CourseNotFoundError as e:
