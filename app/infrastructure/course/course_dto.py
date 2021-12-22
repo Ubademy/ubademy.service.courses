@@ -60,6 +60,7 @@ class CourseDTO(Base):
     active: Union[bool, Column] = Column(Boolean, nullable=False)
     subscription_id: Union[int, Column] = Column(Integer, nullable=False)
     language: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
+    country: Union[str, Column] = Column(String, nullable=False, autoincrement=False)
     description: Union[str, Column] = Column(Text, nullable=False, autoincrement=False)
     presentation_video: Union[str, Column] = Column(
         String, nullable=False, autoincrement=False
@@ -81,6 +82,7 @@ class CourseDTO(Base):
             price=self.price,
             active=self.active,
             language=self.language,
+            country=self.country,
             description=self.description,
             categories=get_categories(self.categories),
             presentation_video=self.presentation_video,
@@ -99,6 +101,7 @@ class CourseDTO(Base):
             price=self.price,
             subscription_id=self.subscription_id,
             language=self.language,
+            country=self.country,
             description=self.description,
             categories=get_categories(self.categories),
             recommendations=get_recommendations(self.reviews),
@@ -136,6 +139,7 @@ class CourseDTO(Base):
             active=course.active,
             subscription_id=course.subscription_id,
             language=course.language,
+            country=course.country,
             description=course.description,
             categories=create_categories(course.id, course.categories),
             presentation_video=course.presentation_video,

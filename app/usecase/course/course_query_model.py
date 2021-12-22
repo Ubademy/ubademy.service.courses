@@ -14,6 +14,7 @@ class CourseReadModel(BaseModel):
     active: bool = Field(example=True)
     subscription_id: int = Field(ge=0, le=2, example=0)
     language: str = Field(example="English")
+    country: str = Field(example="Argentina")
     description: str = Field(example="Learn how to program with C")
     categories: List[str] = Field(example=["Programming", "C"])
     recommendations: dict = Field(example={"recommended": 386, "total": 410})
@@ -40,6 +41,7 @@ class CourseReadModel(BaseModel):
             subscription_id=course.subscription_id,
             recommendations=course.recommendations,
             language=course.language,
+            country=course.country,
             description=course.description,
             categories=course.categories,
             presentation_video=course.presentation_video,

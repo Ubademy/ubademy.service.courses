@@ -10,6 +10,7 @@ class Course:
         price: float,
         active: bool,
         language: str,
+        country: str,
         description: str,
         categories: List[str],
         presentation_video: str,
@@ -25,6 +26,7 @@ class Course:
         self.price: float = price
         self.active: bool = active
         self.language: str = language
+        self.country: str = country
         self.description: str = description
         self.categories: List[str] = categories
         self.presentation_video: str = presentation_video
