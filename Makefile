@@ -19,12 +19,12 @@ test: install
 	$(PYTEST) -vv
 
 fmt:
-	$(ISORT) main.py ./${PACKAGE} ./tests
-	$(BLACK) main.py ./${PACKAGE} ./tests
+	$(ISORT) ./${PACKAGE} ./tests ./routers ./main.py
+	$(BLACK) ./${PACKAGE} ./tests ./routers ./main.py
 
 lint: fmt
-	$(MYPY) main.py ./${PACKAGE}/
-	$(PYLINT) main.py ./${PACKAGE}
+	$(MYPY) ./${PACKAGE}/ ./routers ./main.py
+	$(PYLINT) ./${PACKAGE} ./routers ./main.py
 
 reset:
 	$ docker rm dbcourses
