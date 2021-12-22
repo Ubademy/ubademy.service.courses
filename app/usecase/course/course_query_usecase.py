@@ -6,7 +6,7 @@ from app.domain.course import CourseNotFoundError
 from ..content.content_query_model import ChapterReadModel
 from ..metrics.category_metrics_query_model import CategoryMetricsReadModel
 from ..metrics.new_courses_metrics_query_model import NewCoursesMetricsReadModel
-from ..metrics.subscriptions_metrics_query_model import SubscriptionMetricsReadModel
+from ..metrics.susbcriptions_metrics_query_model import SubscriptionMetricsReadModel
 from ..review.review_query_model import ReviewReadModel
 from .course_query_model import CourseReadModel
 from .course_query_service import CourseQueryService

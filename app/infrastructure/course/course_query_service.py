@@ -16,7 +16,7 @@ from ...usecase.metrics.category_metrics_query_model import CategoryMetricsReadM
 from ...usecase.metrics.new_courses_metrics_query_model import (
     NewCoursesMetricsReadModel,
 )
-from ...usecase.metrics.subscriptions_metrics_query_model import (
+from ...usecase.metrics.susbcriptions_metrics_query_model import (
     SubscriptionMetricsReadModel,
 )
 from ...usecase.review.review_query_model import ReviewReadModel

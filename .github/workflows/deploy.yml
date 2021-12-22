@@ -4,10 +4,8 @@ name: Deploy
 on:
   push:
     branches: [master]
-    paths-ignore:
-      - './README.md'
 
-      # Your workflows jobs.
+# Your workflows jobs.
 jobs:
   build:
     runs-on: ubuntu-latest
