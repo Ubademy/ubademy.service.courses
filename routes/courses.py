@@ -240,12 +240,8 @@ def check_cancel_fee(c, id):
     )
     logger.info(wallet.text)
     logger.info(cancel_fee.text)
-    if float(json.loads(wallet.text)["balance"]) <= float(
-            json.loads(cancel_fee.text)
-    ):
+    if float(json.loads(wallet.text)["balance"]) <= float(json.loads(cancel_fee.text)):
         raise NotEnoughFundsError
-
-
 
 
 @router.delete(
