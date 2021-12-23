@@ -85,6 +85,16 @@ Directory structure (based on [Onion Architecture](https://jeffreypalermo.com/20
 
 ## Installation
 
+### .env
+Make sure you add a .env file in the project's root directory.
+It should include the following variables:
+
+```
+MICROSERVICES=<microservices-dict>
+```
+
+* microservices-dict: {<microservice-name>: <microservice-url>}
+
 ### Dependencies:
 * [python3.9](https://www.python.org/downloads/release/python-390/) and utils
 * [Docker](https://www.docker.com/)
