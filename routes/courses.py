@@ -270,18 +270,20 @@ async def delete_course(
         check_cancel_fee(c, id)
 
         url_subs: str = microservices.get("subscriptions")  # type: ignore
-        server_response = requests.patch(
-            url_subs + "subscriptions/" + id + "/enrollments",
-            params={
-                "course_name": c.name,
-                "creator_id": c.creator_id,
-                "price": c.price,
-                "sub_id": c.subscription_id,
-            },
-        )
-        if server_response.status_code != 204:
-            response.status_code = 500
-            return "payment error"
+
+        try:
+            requests.patch(
+                url_subs + "subscriptions/" + id + "/enrollments",
+                params={
+                    "course_name": c.name,
+                    "creator_id": c.creator_id,
+                    "price": c.price,
+                    "sub_id": c.subscription_id,
+                },
+                timeout=0.0000000001,
+            )
+        except requests.exceptions.ReadTimeout:
+            pass
 
         command_usecase.delete_course_by_id(id)
     except CourseNotFoundError as e:
