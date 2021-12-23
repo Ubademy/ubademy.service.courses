@@ -280,7 +280,7 @@ async def delete_course(
                     "price": c.price,
                     "sub_id": c.subscription_id,
                 },
-                timeout=0.0000000001,
+                timeout=0.01,
             )
         except requests.exceptions.ReadTimeout:
             pass
