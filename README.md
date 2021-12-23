@@ -93,7 +93,7 @@ It should include the following variables:
 MICROSERVICES=<microservices-dict>
 ```
 
-* microservices-dict: {<microservice-name>: <microservice-url>}
+* microservices-dict: {microservice-name: microservice-url}
 
 ### Dependencies:
 * [python3.9](https://www.python.org/downloads/release/python-390/) and utils
